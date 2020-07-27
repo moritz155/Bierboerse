@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Cheap and Good Drinks</title>
+    <meta charset="UTF-8">
+
+
+    <style type="text/css">
+
+        body {
+            background-image: url("/static/BeerR.jpg");
+            height: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+
+
+        }
+
+
+        #chartContainer {
+
+
+        }
+    </style>
+    <div id="code"></div>
+    <script>
+        let updateInterval = JSON.parse('{{iteration}}');
+        window.onload = function () {
+
+
+            let dataList = [];
+            let nameList = JSON.parse('{{ beers | tojson }}');
+            let colors = JSON.parse('{{colorSet |tojson}}');
+            const chartData = loadNames();
+            CanvasJS.addColorSet("customColors", colors);
+
+
+            let chart1 = new CanvasJS.Chart("chartContainer", {
+                zoomEnabled: true,
+                title: {
+                    text: "Getränkepreise"
+                },
+                colorSet: "customColors",
+                axisY: {
+                    suffix: "€",
+                    includeZero: true
+                },
+                toolTip: {
+                    shared: true
+                },
+                legend: {
+                    cursor: "pointer",
+                    verticalAlign: "top",
+                    fontSize: 35,
+                    fontColor: "dimGrey",
+                    itemclick: toggleDataSeries
+                },
+                axisX: {
+                    labelFormatter: function (e) {
+                        return "";
+                    }
+                },
+                data: chartData
+            });
+
+
+            function loadNames() {
+                initializeDataList();
+                let data = [];
+                for (let i = 0; i < nameList.length; i++) {
+                    data.push({
+                        type: "line",
+                        //xValueType: "dateTime",
+                        yValueFormatString: "€##.00",
+                        //xValueFormatString: "hh:mm:ss TT",
+                        showInLegend: true,
+                        name: nameList[i],
+                        dataPoints: dataList[nameList[i]]
+                    });
+                }
+                return data;
+            }
+
+
+            function initializeDataList() {
+                for (let i = 0; i < nameList.length; i++) {
+                    dataList[nameList[i]] = [];
+                }
+            }
+
+            function initializeLegend() {
+                for (let i = 0; i < nameList.length; i++) {
+                   // nameList[i].fontColor = "blue"
+                    chart1.options.data[i].legendText = nameList[i];
+
+                }
+                chart1.render();
+            }
+
+            function updateLegend() {
+                for (let i = 0; i < nameList.length; i++) {
+                    chart1.options.data[i].legendText = nameList[i] + " " + getLastValueFromList(dataList[nameList[i]]) + " €";
+                }
+            }
+
+            function getLastValueFromList(list) {
+                return list[list.length - 1]['y'];
+            }
+
+
+            function addData(data) {
+                for (let drink in data) {
+                    let newEntry = data[drink][data[drink].length - 1];//last price of input is the new one
+                    //console.log(newEntry[0]);
+                    dataList[drink].push({x: newEntry[0], y: newEntry[1]}); //add the last Price
+                    if (dataList[drink].length > 7) { // max 8 entries
+                        let len = dataList[drink].length;
+                        dataList[drink].splice(0, len - 8);
+                    }
+                }
+                updateLegend();
+                chart1.render();
+            }
+
+
+            function updateData() {
+                $.getJSON("http://127.0.0.1:8000/data/preise", addData);
+            }
+
+
+            function toggleDataSeries(e) {
+                e.dataSeries.visible = !(typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible);
+                chart1.render();
+            }
+
+
+            // generates first set of dataPoints
+            //updateChart(10);
+
+            initializeLegend();
+            updateData();
+
+            setInterval(function () {
+                updateData();
+            }, updateInterval * 1000);
+
+            chart1.render();
+
+
+        }
+    </script>
+    </div>
+
+</head>
+<div id="chartContainer"
+     style="position: absolute; height: 520px; width: 1040px;margin: 0px auto;left:2%;top: 18%"></div>
+<p id="demo"></p>
+<script src="{{ url_for('static', filename='js/canvas.js/canvasjs.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+        integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8">
+    let socket = io();
+    socket.on('connect', function () {
+        socket.emit('my event', {data: 'I\'m connected!'});
+    });
+</script>
+</body>
+</html>

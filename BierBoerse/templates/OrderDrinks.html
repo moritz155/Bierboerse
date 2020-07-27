@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <title>Lets Take The Order</title>
+    <style type="text/css">
+        * {
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+
+<body>
+<h1>Choose your Beer wisely</h1>
+<div id="buttons"></div>
+<script>
+    let nameList = JSON.parse('{{ beers | tojson }}');
+    let colors = JSON.parse('{{colorSet |tojson}}')
+    let buttons = "<form method='post' id=Drink>"
+
+    for (let i = 0; i < nameList.length; i++) {
+        buttons += "<button id=" + nameList[i] + ">" + nameList[i] + "</button> "
+    }
+    buttons += "</form>"
+    document.getElementById("buttons").innerHTML = buttons;
+    let notEnoughColors = false;
+    let lastColor = colors.length - 1;
+    for (let j = 0; j < nameList.length; j++) {
+        document.getElementById(nameList[j]).style.width = "600px";
+        document.getElementById(nameList[j]).style.height = "70px";
+                document.getElementById(nameList[j]).style.fontSize = "xx-large";
+        document.getElementById(nameList[j]).style.fontWeight = "bolder";
+
+        if (colors.length <= j ) {
+            notEnoughColors = true;
+            document.getElementById(nameList[j]).style.color = colors[lastColor];
+            continue;
+        }
+        document.getElementById(nameList[j]).style.color = colors[j];
+    }
+
+
+</script>
+<style type="text/css">
+
+
+    h1 {
+        font-family: Impact;
+        font-size: 70px;
+        text-align: center;
+    }
+
+    #Drink {
+        text-align: center;
+
+    }
+
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+    $('#Drink').on('submit', function (e) {
+        e.preventDefault();
+        let id = document.activeElement.id
+        $.ajax({
+            url: 'http://127.0.0.1:8000/ordered_Drink/',
+            method: 'POST',
+            data: {'name': id}
+        });
+    });
+
+
+</script>
+
+
+</div>
+</body>
+</html>
