@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import time, json, random
-from flask_socketio import SocketIO
 
 
 class Drink:
@@ -57,9 +56,8 @@ class Drink:
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
 uhrzeit = float(time.time())
-iterate = 100
+iterate = 5   #in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",

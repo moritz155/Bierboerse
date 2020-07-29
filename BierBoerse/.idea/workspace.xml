@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d8178f3e-0725-47b9-b861-5e75e68e22ad" name="Default Changelist" comment="" />
+    <list default="true" id="d8178f3e-0725-47b9-b861-5e75e68e22ad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/BierBörse.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BierBörse.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plot_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,10 +22,13 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1ZFpapOMJqlo6iSdYOP2llTv1HA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -28,6 +37,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -212,96 +222,60 @@
       <workItem from="1589639738449" duration="84000" />
       <workItem from="1589640151360" duration="244000" />
       <workItem from="1591088417763" duration="3665000" />
+      <workItem from="1595881559665" duration="238000" />
+      <workItem from="1595882436257" duration="1121000" />
+      <workItem from="1596018128632" duration="175000" />
+      <workItem from="1596018315005" duration="680000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1587218593912">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="708" y="355" width="563" height="403" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596018753661">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
-    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1587218593912" />
-    <state x="713" y="323" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1584822236054">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="708" y="355" width="563" height="403" key="#com.intellij.fileTypes.FileTypeChooser/70.27.1850.1053@70.27.1850.1053" timestamp="1596018753661" />
+    <state x="798" y="323" width="424" height="491" key="FileChooserDialogImpl" timestamp="1595883414676">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
-    <state x="713" y="323" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584822236054" />
-    <state x="709" y="356" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1584810377577">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="709" y="356" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584810377577" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1584822255175">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584822255175" />
-    <state width="1877" height="194" key="GridCell.Tab.0.bottom" timestamp="1591093267859">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state x="798" y="323" width="424" height="491" key="FileChooserDialogImpl/70.27.1850.1053@70.27.1850.1053" timestamp="1595883414676" />
+    <state width="1804" height="278" key="GridCell.Tab.0.bottom" timestamp="1596018994609">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
     <state width="1877" height="194" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1591093267859" />
     <state width="1877" height="194" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1591088605125" />
-    <state width="938" height="301" key="GridCell.Tab.0.bottom/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584623043575" />
-    <state width="1877" height="194" key="GridCell.Tab.0.center" timestamp="1591093267859">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1804" height="278" key="GridCell.Tab.0.bottom/70.27.1850.1053@70.27.1850.1053" timestamp="1596018994609" />
+    <state width="1804" height="278" key="GridCell.Tab.0.center" timestamp="1596018994608">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
     <state width="1877" height="194" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1591093267859" />
     <state width="1877" height="194" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1591088605124" />
-    <state width="938" height="301" key="GridCell.Tab.0.center/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584623043575" />
-    <state width="1877" height="194" key="GridCell.Tab.0.left" timestamp="1591093267859">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1804" height="278" key="GridCell.Tab.0.center/70.27.1850.1053@70.27.1850.1053" timestamp="1596018994608" />
+    <state width="1804" height="278" key="GridCell.Tab.0.left" timestamp="1596018994608">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
     <state width="1877" height="194" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1591093267859" />
     <state width="1877" height="194" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1591088605124" />
-    <state width="938" height="301" key="GridCell.Tab.0.left/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584623043574" />
-    <state width="1877" height="194" key="GridCell.Tab.0.right" timestamp="1591093267859">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1804" height="278" key="GridCell.Tab.0.left/70.27.1850.1053@70.27.1850.1053" timestamp="1596018994608" />
+    <state width="1804" height="278" key="GridCell.Tab.0.right" timestamp="1596018994608">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
     <state width="1877" height="194" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1591093267859" />
     <state width="1877" height="194" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1591088605124" />
-    <state width="938" height="301" key="GridCell.Tab.0.right/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584623043575" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1584708139884">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584708139884" />
-    <state width="938" height="374" key="GridCell.Tab.1.bottom/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584464354066" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1584708139883">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584708139883" />
-    <state width="938" height="374" key="GridCell.Tab.1.center/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584464354066" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1584708139883">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584708139883" />
-    <state width="938" height="374" key="GridCell.Tab.1.left/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584464354066" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1584708139884">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584708139884" />
-    <state width="938" height="374" key="GridCell.Tab.1.right/0.0.1920.1160/1920.0.1920.1040/-1920.0.1920.1040@0.0.1920.1160" timestamp="1584464354066" />
-    <state x="-1459" y="162" key="SettingsEditor" timestamp="1591093051159">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1804" height="278" key="GridCell.Tab.0.right/70.27.1850.1053@70.27.1850.1053" timestamp="1596018994608" />
+    <state x="514" y="191" width="1022" height="737" key="SettingsEditor" timestamp="1595883510127">
+      <screen x="70" y="27" width="1850" height="1053" />
     </state>
     <state x="-1459" y="162" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1591093051159" />
-    <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584708454431" />
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1584792389084">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584792389084" />
-    <state x="-540" y="-8" width="1893" height="921" maximized="true" key="dock-window-1" timestamp="1584874213290">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="-540" y="-8" width="1893" height="921" maximized="true" key="dock-window-1/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584874213290" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1584708108099">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1584708108099" />
+    <state x="514" y="191" width="1022" height="737" key="SettingsEditor/70.27.1850.1053@70.27.1850.1053" timestamp="1595883510127" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BierBörse$drink__1_.coverage" NAME="drink (1) Coverage Results" MODIFIED="1584808069459" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BierBoerse$routes.coverage" NAME="routes Coverage Results" MODIFIED="1591088434935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BierBörse$Simulation.coverage" NAME="Simulation Coverage Results" MODIFIED="1585494765977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BierBörse$l.coverage" NAME="l Coverage Results" MODIFIED="1587991730952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/templates" />
     <SUITE FILE_PATH="coverage/BierBörse$routes.coverage" NAME="routes Coverage Results" MODIFIED="1589640154997" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BierBörse$drink__1_.coverage" NAME="drink (1) Coverage Results" MODIFIED="1584808069459" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BierBörse$Simulation.coverage" NAME="Simulation Coverage Results" MODIFIED="1585494765977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BierBoerse$routes.coverage" NAME="routes Coverage Results" MODIFIED="1596018926977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
