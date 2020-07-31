@@ -15,7 +15,7 @@
 <div id="buttons"></div>
 <script>
     let nameList = JSON.parse('{{ beers | tojson }}');
-    let colors = JSON.parse('{{colorSet |tojson}}')
+    let colors = JSON.parse('{{colorSet | tojson}}')
     let buttons = "<form method='post' id=Drink>"
 
     for (let i = 0; i < nameList.length; i++) {
@@ -50,17 +50,12 @@
         text-align: center;
     }
 
-    #Drink {
-        text-align: center;
-
-    }
-
 </style>
 
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
-    $('#Drink').on('submit', function (e) {
+    $('#Drink').on('submit', function (e) {  // tell routes.py that there is an order
         e.preventDefault();
         let id = document.activeElement.id
         $.ajax({

@@ -8,9 +8,9 @@ class Drink:
         self.allPrices = allPrices
         self.maxPrice = allPrices[0] * 1.4
         self.minPrice = allPrices[0] * 0.7
-        self.newDict = {}
-        self.newCounter = 0
-        self.price_was_changed = 0
+        self.newDict = {}  # gives every order a time; size of dict is equal to amount of orders
+        self.newCounter = 0  # counter of orders in a period
+        self.price_was_changed = 0  # counts the times the price is changed
 
     def addPrice(self, newPrice):
         self.allPrices.append(newPrice)
@@ -77,7 +77,6 @@ def simulation():
         allDrinks[drink].newDict[time.time()] = 1
 
 
-
 def analysis():
     changed = 0
     for drink in allDrinks:
@@ -95,25 +94,24 @@ def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
 
 
-
 @app.route('/')
 def index():
     return render_template('bierpreise.html', beers=beers_names, iteration=iterate, colorSet=customColorSet)
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
-def ordered_Drink():
+def ordered_Drink(): # receives the orders and adds it to the drink objects
     name = request.form.get('name', 0)
     for drink in allDrinks:
         if drink.name == name:
-            uhrzeit = float(time.time())
-            drink.newDict[uhrzeit] = 1
+            clock = float(time.time())
+            drink.newDict[clock] = 1
     return ""
 
 
 @app.route('/data/preise')
 def preise():
-    #simulation()
+    # simulation()
     timestamp = request.args.get('timestamp')
     if timestamp is not None:
         timestamp = float(timestamp)
@@ -122,7 +120,7 @@ def preise():
     for drink in allDrinks:
         drink.newOrders()
         newly_bought = newly_bought + drink.newCounter
-        #print(drink.name + str(drink.newCounter))
+        # print(drink.name + str(drink.newCounter))
     counter = 0
     changePrice = []  # takes drink if price was added in this period
     for drink in allDrinks:
@@ -133,8 +131,8 @@ def preise():
             drink.addNewRandomPrice(True, True)
             changePrice.append(drink)
             continue
-        elif relative_part == 0 and counter == 0:
-            counter = 1  # secures that only one price will fall
+        elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
+            counter = 1  # secures that only one price will decrease
             drink.addNewRandomPrice(False, True)
             changePrice.append(drink)
             continue
@@ -164,7 +162,7 @@ def preise():
 
 
 start_time = float(time.time())
-iterate = 5   # in seconds
+iterate = 5  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",
