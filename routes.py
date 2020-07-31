@@ -3,7 +3,6 @@ import time, json, random
 
 
 class Drink:
-
     def __init__(self, name, allPrices):
         self.name = name
         self.allPrices = allPrices
@@ -123,7 +122,7 @@ def preise():
     for drink in allDrinks:
         drink.newOrders()
         newly_bought = newly_bought + drink.newCounter
-        print(drink.name + str(drink.newCounter))
+        #print(drink.name + str(drink.newCounter))
     counter = 0
     changePrice = []  # takes drink if price was added in this period
     for drink in allDrinks:
@@ -188,5 +187,4 @@ recentlyChangedPrices = []
 beers_names = []
 for beer in allDrinks:
     beers_names.append(beer.name)
-
 app.run('localhost', 8000, debug=True)
