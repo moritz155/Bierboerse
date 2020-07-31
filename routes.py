@@ -56,17 +56,6 @@ class Drink:
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-uhrzeit = float(time.time())
-iterate = 5   #in seconds
-data = {}
-customColorSet = ["#FF0000",
-                  "#FF8F00",
-                  "#4BF70B",
-                  "#0BF7C5",
-                  "#0B0FF7",
-                  "#C90BF7",
-                  "#F70B6F"
-                  ]
 
 
 def updateData():  # data returns the last eight prices only
@@ -74,7 +63,7 @@ def updateData():  # data returns the last eight prices only
         mult = 0
         list = []
         for price in drink.allPrices:
-            list.append((uhrzeit + 30 * mult, round(price, 2)))
+            list.append((start_time + 30 * mult, round(price, 2)))
             mult = mult + 1
         if len(list) > 8:
             data[drink.name] = list[-8:]
@@ -87,6 +76,7 @@ def simulation():
     for j in range(numberOfDrinks):
         drink = random.randint(0, (len(allDrinks) - 1))
         allDrinks[drink].newDict[time.time()] = 1
+
 
 
 def analysis():
@@ -106,6 +96,12 @@ def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
 
 
+
+@app.route('/')
+def index():
+    return render_template('bierpreise.html', beers=beers_names, iteration=iterate, colorSet=customColorSet)
+
+
 @app.route('/ordered_Drink/', methods=['POST'])
 def ordered_Drink():
     name = request.form.get('name', 0)
@@ -116,14 +112,9 @@ def ordered_Drink():
     return ""
 
 
-@app.route('/')
-def index():
-    return render_template('bierpreise.html', beers=beers_names, iteration=iterate, colorSet=customColorSet)
-
-
 @app.route('/data/preise')
 def preise():
-    simulation()
+    #simulation()
     timestamp = request.args.get('timestamp')
     if timestamp is not None:
         timestamp = float(timestamp)
@@ -132,6 +123,7 @@ def preise():
     for drink in allDrinks:
         drink.newOrders()
         newly_bought = newly_bought + drink.newCounter
+        print(drink.name + str(drink.newCounter))
     counter = 0
     changePrice = []  # takes drink if price was added in this period
     for drink in allDrinks:
@@ -159,11 +151,12 @@ def preise():
     for drink in addPriceTo:
         drink.addNewRandomPrice(True, False)  # all drinks now have same number of prices
     updateData()
-    global clock
-    if time.time() - clock >= 140:
+    global clock_for_analysis
+    if time.time() - clock_for_analysis >= 140:
         analysis()
-        clock = time.time()
+        clock_for_analysis = float(time.time())
     for drink in data:
+
         result[drink] = []
         for i in data[drink]:
             if timestamp is None or i[1] >= timestamp:
@@ -171,6 +164,17 @@ def preise():
     return json.dumps(result)
 
 
+start_time = float(time.time())
+iterate = 5   # in seconds
+data = {}
+customColorSet = ["#FF0000",
+                  "#FF8F00",
+                  "#4BF70B",
+                  "#0BF7C5",
+                  "#0B0FF7",
+                  "#C90BF7",
+                  "#F70B6F"
+                  ]
 Drink1 = Drink("Gösser", [2.10])
 Drink2 = Drink("Gustl", [2.0])
 Drink3 = Drink("Radler", [2.3])
@@ -179,7 +183,7 @@ Drink5 = Drink("Cola", [1.9])
 Drink6 = Drink("Wein", [1.7])
 Drink7 = Drink("Luft", [1.5])
 allDrinks = [Drink1, Drink2, Drink3, Drink4, Drink5, Drink6, Drink7]
-clock = time.time()
+clock_for_analysis = time.time()
 recentlyChangedPrices = []
 beers_names = []
 for beer in allDrinks:

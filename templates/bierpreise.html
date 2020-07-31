@@ -90,7 +90,6 @@
 
             function initializeLegend() {
                 for (let i = 0; i < nameList.length; i++) {
-                   // nameList[i].fontColor = "blue"
                     chart1.options.data[i].legendText = nameList[i];
 
                 }
@@ -111,7 +110,6 @@
             function addData(data) {
                 for (let drink in data) {
                     let newEntry = data[drink][data[drink].length - 1];//last price of input is the new one
-                    //console.log(newEntry[0]);
                     dataList[drink].push({x: newEntry[0], y: newEntry[1]}); //add the last Price
                     if (dataList[drink].length > 7) { // max 8 entries
                         let len = dataList[drink].length;
@@ -132,10 +130,6 @@
                 e.dataSeries.visible = !(typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible);
                 chart1.render();
             }
-
-
-            // generates first set of dataPoints
-            //updateChart(10);
 
             initializeLegend();
             updateData();
