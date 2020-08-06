@@ -3,7 +3,7 @@
 <head>
     <title>Cheap and Good Drinks</title>
     <meta charset="UTF-8">
-
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
 
     <style type="text/css">
 
@@ -30,7 +30,7 @@
 
             let dataList = [];
             let nameList = JSON.parse('{{ beers | tojson }}');
-            let colors = JSON.parse('{{colorSet |tojson}}');
+            let colors = JSON.parse('{{colorSet | tojson}}');
             const chartData = loadNames();
             CanvasJS.addColorSet("customColors", colors);
 
@@ -151,5 +151,4 @@
 <p id="demo"></p>
 <script src="{{ url_for('static', filename='js/canvas.js/canvasjs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
-</body>
 </html>

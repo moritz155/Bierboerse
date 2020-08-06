@@ -3,17 +3,19 @@ import time, json, random
 
 
 class Drink:
-    def __init__(self, name, allPrices):
+    def __init__(self, name, init_price):  # array with one price - the starting price
         self.name = name
-        self.allPrices = allPrices
-        self.maxPrice = allPrices[0] * 1.4
-        self.minPrice = allPrices[0] * 0.7
+        self.price_history = init_price # former allPrices
+        self.maxPrice = init_price[0] * 1.4
+        self.minPrice = init_price[0] * 0.7
         self.newDict = {}  # gives every order a time; size of dict is equal to amount of orders
         self.newCounter = 0  # counter of orders in a period
         self.price_was_changed = 0  # counts the times the price is changed
 
+
     def addPrice(self, newPrice):
-        self.allPrices.append(newPrice)
+        self.price_history.append(newPrice)
+
 
     def update_recentlyChangedPrices(self):
         for drink in recentlyChangedPrices:
@@ -23,14 +25,14 @@ class Drink:
                 return
         recentlyChangedPrices.append(self)  # if price of drink wasnt changed yet
 
-    def addNewRandomPrice(self, high, change):
-        if change:
+    def addNewRandomPrice(self, price_increase, change_price):
+        if change_price:
             self.price_was_changed = self.price_was_changed + 1
             multiplicator = random.randint(0, 5)  # max -50 cent
-            oldPrice = self.allPrices[-1]
-            if high:
+            oldPrice = self.price_history[-1]
+            if price_increase:
                 newPrice = oldPrice + (multiplicator * 0.1)  # get a random lower price
-            elif not high:
+            elif not price_increase:
                 newPrice = oldPrice - (multiplicator * 0.1)  # get a random higher price
             if self.minPrice < newPrice < self.maxPrice:
                 self.addPrice(newPrice)
@@ -38,14 +40,14 @@ class Drink:
                 self.addPrice(oldPrice)
             self.update_recentlyChangedPrices()
         else:
-            self.addPrice(self.allPrices[-1])
+            self.addPrice(self.price_history[-1])
 
     def newOrders(self):
         current_time = time.time()
         listOfItemsToRemove = []
         self.newCounter = 0
         for element_time in self.newDict:
-            if current_time - element_time > iterate * 2:
+            if current_time - element_time > iteration_interval * 2:
                 listOfItemsToRemove.append(element_time)
             else:
                 self.newCounter = self.newCounter + 1
@@ -61,7 +63,7 @@ def updateData():  # data returns the last eight prices only
     for drink in allDrinks:
         mult = 0
         list = []
-        for price in drink.allPrices:
+        for price in drink.price_history:
             list.append((start_time + 30 * mult, round(price, 2)))
             mult = mult + 1
         if len(list) > 8:
@@ -83,9 +85,9 @@ def analysis():
         print(drink.name)
         changed = changed + drink.price_was_changed
         p = 0
-        for price in drink.allPrices:
+        for price in drink.price_history:
             p = p + price
-        print(drink.name + " average price: " + str(p / len(drink.allPrices)))
+        print(drink.name + " average price: " + str(p / len(drink.price_history)))
     print(changed)
 
 
@@ -96,7 +98,7 @@ def input():
 
 @app.route('/')
 def index():
-    return render_template('bierpreise.html', beers=beers_names, iteration=iterate, colorSet=customColorSet)
+    return render_template('bierpreise.html', beers=beers_names, iteration=iteration_interval, colorSet=customColorSet)
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
@@ -124,9 +126,9 @@ def preise():
     counter = 0
     changePrice = []  # takes drink if price was added in this period
     for drink in allDrinks:
-        relative_part = 0
+        relative_part = 0.0
         if not newly_bought == 0:
-            relative_part: float = drink.newCounter / newly_bought
+            relative_part = drink.newCounter / newly_bought
         if relative_part >= 0.25:  # relative part must be higher than 25% to increase price
             drink.addNewRandomPrice(True, True)
             changePrice.append(drink)
@@ -142,7 +144,7 @@ def preise():
     else:
         notChangedYet = [x for x in allDrinks if x not in recentlyChangedPrices]
         drink = random.choice(notChangedYet)
-        drink.addNewRandomPrice(False, True)  # takes random drink of those without price change
+        drink.addNewRandomPrice(False, True)  # takes random drink of those without price change_price
         changePrice.append(drink)
     addPriceTo = [x for x in allDrinks if x not in changePrice]  # includes all drinks that do not have enough prices
     for drink in addPriceTo:
@@ -162,7 +164,7 @@ def preise():
 
 
 start_time = float(time.time())
-iterate = 5  # in seconds
+iteration_interval = 5  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",
@@ -185,4 +187,4 @@ recentlyChangedPrices = []
 beers_names = []
 for beer in allDrinks:
     beers_names.append(beer.name)
-app.run('localhost', 8000, debug=True)
+app.run('127.0.0.1', 8000, debug=True)
