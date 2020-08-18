@@ -1,21 +1,25 @@
 from flask import Flask, render_template, request, jsonify
 import time, json, random
+from json import JSONEncoder
+
+
+class EmployeeEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
 
 
 class Drink:
     def __init__(self, name, init_price):  # array with one price - the starting price
         self.name = name
-        self.price_history = init_price # former allPrices
+        self.price_history = init_price  # former allPrices
         self.maxPrice = init_price[0] * 1.4
         self.minPrice = init_price[0] * 0.7
         self.newDict = {}  # gives every order a time; size of dict is equal to amount of orders
         self.newCounter = 0  # counter of orders in a period
         self.price_was_changed = 0  # counts the times the price is changed
 
-
     def addPrice(self, newPrice):
         self.price_history.append(newPrice)
-
 
     def update_recentlyChangedPrices(self):
         for drink in recentlyChangedPrices:
@@ -96,13 +100,28 @@ def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
 
 
+@app.route('/fullScreen')
+def fullScreen():
+    return render_template('fullScreen_test.html', beers=beers_names, colorSet=customColorSet,
+                           iteration=iteration_interval)
+
+
+@app.route('/table')
+def table():
+    allDrinks_serializable = []
+    for drink in allDrinks:
+        allDrinks_serializable.append(EmployeeEncoder().encode(drink))
+
+    return render_template('beerTable.html', beers=allDrinks_serializable, colorSet=customColorSet)
+
+
 @app.route('/')
 def index():
     return render_template('bierpreise.html', beers=beers_names, iteration=iteration_interval, colorSet=customColorSet)
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
-def ordered_Drink(): # receives the orders and adds it to the drink objects
+def ordered_Drink():  # receives the orders and adds it to the drink objects
     name = request.form.get('name', 0)
     for drink in allDrinks:
         if drink.name == name:
