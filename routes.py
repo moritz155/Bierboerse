@@ -1,11 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import time, json, random
-from json import JSONEncoder
-
-
-class EmployeeEncoder(JSONEncoder):
-    def default(self, o):
-        return o.__dict__
 
 
 class Drink:
@@ -95,6 +89,22 @@ def analysis():
     print(changed)
 
 
+def build_data_for_table():
+    table_data = []
+    for drink in allDrinks:
+        single_drink_data = []
+        single_drink_data.append(drink.name)
+        single_drink_data.append(str(drink.price_history[-1])[0:3])  # current price
+        try:
+            single_drink_data.append(str(drink.price_history[-1] - drink.price_history[-2])[0:4])  # price difference
+        except IndexError:  # if price history has only one price
+            single_drink_data.append(0)
+        single_drink_data.append(str(drink.minPrice)[0:3])
+        single_drink_data.append(str(drink.maxPrice)[0:3])
+        table_data.append(single_drink_data)
+    return table_data
+
+
 @app.route('/input')
 def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
@@ -107,12 +117,10 @@ def fullScreen():
 
 
 @app.route('/table')
-def table():
-    allDrinks_serializable = []
-    for drink in allDrinks:
-        allDrinks_serializable.append(EmployeeEncoder().encode(drink))
-
-    return render_template('beerTable.html', beers=allDrinks_serializable, colorSet=customColorSet)
+def table():  # table needs: name, price, price difference, max, min
+    preise()
+    table_data = build_data_for_table()
+    return render_template('beerTable.html', beers=table_data, colorSet=customColorSet, iteration=iteration_interval)
 
 
 @app.route('/')

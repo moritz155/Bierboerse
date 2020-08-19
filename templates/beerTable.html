@@ -2,9 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Stock Exchange </title>
 </head>
 <body>
-$END$
+
+<h1>All Beers</h1>
+
+<style>
+    table, th,td{
+        border: 1px solid black;
+        font-size: xx-large;
+    }
+</style>
+<div id="table">
+<script>
+    let updateInterval = JSON.parse('{{iteration}}');
+    let beerList = JSON.parse('{{ beers | tojson }}'); //can only take strings
+    let colors = JSON.parse('{{colorSet | tojson}}');
+    let table = "<table style='width:100%'>";
+    table += "<tr> <th>Getränk</th> <th>Preis</th> <th>Trend</th> <th>Min</th> <th>Max</th> </tr>"; //columns
+    for(let i = 0;i<beerList.length;i++){
+        table += "<tr>";
+        for(let j = 0; j<beerList[i].length;j++){
+                 table += "<td>" + beerList[i][j] + "</td>";
+        }
+        table += "</tr>";
+    }
+    table += "</table>"
+    document.getElementById("table").innerHTML = table;
+
+</script>
+</div>
 </body>
 </html>
