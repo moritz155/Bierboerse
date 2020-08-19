@@ -19,14 +19,14 @@
         let beerList = JSON.parse('{{ beers | tojson }}'); //can only take strings
         let colors = JSON.parse('{{colorSet | tojson}}');
         let myVar = setInterval("updateData();", updateInterval * 1000);
-
+        printTable();
         function printTable() {
             let table = "<table style='width:100%'>";
             table += "<tr> <th>Getränk</th> <th>Preis</th> <th>Trend</th> <th>Min</th> <th>Max</th> </tr>"; //columns
             for (let i = 0; i < beerList.length; i++) {
                 table += "<tr>";
                 for (let j = 0; j < beerList[i].length; j++) {
-                    table += "<td>" + beerList[i][j] + "</td>";
+                    table += "<td>" + beerList[i][j] + "</td>"; // rows
                 }
                 table += "</tr>";
             }
@@ -35,7 +35,7 @@
         }
 
         function updateData() {
-            $.getJSON("http://127.0.0.1:8000/table/data", function(data)
+            $.getJSON("http://127.0.0.1:8000/data/table", function(data)
             {
                 beerList = data;
                 printTable();

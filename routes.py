@@ -118,12 +118,11 @@ def fullScreen():
 
 @app.route('/table')
 def table():  # table needs: name, price, price difference, max, min
-    preise()
     table_data = build_data_for_table()
     return render_template('beerTable.html', beers=table_data, colorSet=customColorSet, iteration=iteration_interval)
 
 
-@app.route('/table/data')
+@app.route('/data/table')
 def data_for_table():  # table needs: name, price, price difference, max, min
     table_data = build_data_for_table()
     return json.dumps(table_data)
@@ -144,7 +143,7 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
     return ""
 
 
-@app.route('/data/preise')
+@app.route('/data/chart')
 def preise():
     # simulation()
     timestamp = request.args.get('timestamp')
@@ -197,7 +196,7 @@ def preise():
 
 
 start_time = float(time.time())
-iteration_interval = 2  # in seconds
+iteration_interval = 5  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",
