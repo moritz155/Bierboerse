@@ -123,6 +123,12 @@ def table():  # table needs: name, price, price difference, max, min
     return render_template('beerTable.html', beers=table_data, colorSet=customColorSet, iteration=iteration_interval)
 
 
+@app.route('/table/data')
+def data_for_table():  # table needs: name, price, price difference, max, min
+    table_data = build_data_for_table()
+    return json.dumps(table_data)
+
+
 @app.route('/')
 def index():
     return render_template('bierpreise.html', beers=beers_names, iteration=iteration_interval, colorSet=customColorSet)
@@ -191,7 +197,7 @@ def preise():
 
 
 start_time = float(time.time())
-iteration_interval = 5  # in seconds
+iteration_interval = 2  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",
