@@ -57,7 +57,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 
-def updateData():  # data returns the last eight prices only
+def update_data():  # data returns the last eight prices only
     for drink in allDrinks:
         mult = 0
         list = []
@@ -124,6 +124,7 @@ def table():  # table needs: name, price, price difference, max, min
 
 @app.route('/data/table')
 def data_for_table():  # table needs: name, price, price difference, max, min
+    prices()
     table_data = build_data_for_table()
     return json.dumps(table_data)
 
@@ -144,50 +145,54 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
 
 
 @app.route('/data/chart')
-def preise():
-    # simulation()
+def prices():
+    global current_time
+    result = {}
     timestamp = request.args.get('timestamp')
     if timestamp is not None:
         timestamp = float(timestamp)
-    result = {}
-    newly_bought = 0
-    for drink in allDrinks:
-        drink.newOrders()
-        newly_bought = newly_bought + drink.newCounter
-        # print(drink.name + str(drink.newCounter))
-    counter = 0
-    changePrice = []  # takes drink if price was added in this period
-    for drink in allDrinks:
-        relative_part = 0.0
-        if not newly_bought == 0:
-            relative_part = drink.newCounter / newly_bought
-        if relative_part >= 0.25:  # relative part must be higher than 25% to increase price
-            drink.addNewRandomPrice(True, True)
-            changePrice.append(drink)
-            continue
-        elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
-            counter = 1  # secures that only one price will decrease
-            drink.addNewRandomPrice(False, True)
-            changePrice.append(drink)
-            continue
-    if len(recentlyChangedPrices) == len(allDrinks):
-        recentlyChangedPrices[0].addNewRandomPrice(False, True)
-        changePrice.append(recentlyChangedPrices[-1])
-    else:
-        notChangedYet = [x for x in allDrinks if x not in recentlyChangedPrices]
-        drink = random.choice(notChangedYet)
-        drink.addNewRandomPrice(False, True)  # takes random drink of those without price change_price
-        changePrice.append(drink)
-    addPriceTo = [x for x in allDrinks if x not in changePrice]  # includes all drinks that do not have enough prices
-    for drink in addPriceTo:
-        drink.addNewRandomPrice(True, False)  # all drinks now have same number of prices
-    updateData()
-    global clock_for_analysis
-    if time.time() - clock_for_analysis >= 140:
-        analysis()
-        clock_for_analysis = float(time.time())
-    for drink in data:
+    if time.time() - current_time > iteration_interval:  # ensure that prices never update more often than interval
+        current_time = time.time()
+        # simulation()
 
+        newly_bought = 0
+        for drink in allDrinks:
+            drink.newOrders()
+            newly_bought = newly_bought + drink.newCounter
+            # print(drink.name + str(drink.newCounter))
+        counter = 0
+        changePrice = []  # takes drink if price was added in this period
+        for drink in allDrinks:
+            relative_part = 0.0
+            if not newly_bought == 0:
+                relative_part = drink.newCounter / newly_bought
+            if relative_part >= 0.25:  # relative part must be higher than 25% to increase price
+                drink.addNewRandomPrice(True, True)
+                changePrice.append(drink)
+                continue
+            elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
+                counter = 1  # secures that only one price will decrease
+                drink.addNewRandomPrice(False, True)
+                changePrice.append(drink)
+                continue
+        if len(recentlyChangedPrices) == len(allDrinks):
+            recentlyChangedPrices[0].addNewRandomPrice(False, True)
+            changePrice.append(recentlyChangedPrices[-1])
+        else:
+            notChangedYet = [x for x in allDrinks if x not in recentlyChangedPrices]
+            drink = random.choice(notChangedYet)
+            drink.addNewRandomPrice(False, True)  # takes random drink of those without price change_price
+            changePrice.append(drink)
+        addPriceTo = [x for x in allDrinks if
+                      x not in changePrice]  # includes all drinks that do not have enough prices
+        for drink in addPriceTo:
+            drink.addNewRandomPrice(True, False)  # all drinks now have same number of prices
+        update_data()
+        #         global clock_for_analysis
+        #         # if time.time() - clock_for_analysis >= 140:
+        #         #     analysis()
+        #         #     clock_for_analysis = float(time.time())
+    for drink in data:
         result[drink] = []
         for i in data[drink]:
             if timestamp is None or i[1] >= timestamp:
@@ -195,6 +200,7 @@ def preise():
     return json.dumps(result)
 
 
+current_time: float = time.time()
 start_time = float(time.time())
 iteration_interval = 5  # in seconds
 data = {}
