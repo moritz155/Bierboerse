@@ -3,7 +3,7 @@
 <head>
     <title>Cheap and Good Drinks</title>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon"/>
 
     <style type="text/css">
 
@@ -53,12 +53,15 @@
                     verticalAlign: "top",
                     fontSize: 35,
                     fontColor: "dimGrey",
-                    itemclick: toggleDataSeries
+                   // itemclick: toggleDataSeries
                 },
                 axisX: {
                     labelFormatter: function (e) {
                         return "";
                     }
+                },
+                dataPoints: {
+                  type : "line"
                 },
                 data: chartData
             });
@@ -106,8 +109,29 @@
                 return list[list.length - 1]['y'];
             }
 
+            function newDataHasNewValues(data) {
+                for (let drink in data) {
+                    let newEntry = data[drink][data[drink].length - 1];//last price of input is the new one
+                    if (dataList[drink].length == 0) {
+                        return true;
+                    }
+                    let latestPrice = dataList[drink][dataList[drink].length - 1];
+                    if (newEntry[1] != latestPrice.y) { // diff !0 and !==
+                        console.log("new: " + newEntry)
+                        console.log("current: " + latestPrice.y);
+                        return true;
+                    }
+
+                }
+                return false;
+            }
+
 
             function addData(data) {
+                if (!newDataHasNewValues(data)) {
+                    console.log("r");
+                    return;
+                }
                 for (let drink in data) {
                     let newEntry = data[drink][data[drink].length - 1];//last price of input is the new one
                     dataList[drink].push({x: newEntry[0], y: newEntry[1]}); //add the last Price
@@ -118,6 +142,8 @@
                 }
                 updateLegend();
                 chart1.render();
+
+
             }
 
 

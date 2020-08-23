@@ -45,7 +45,7 @@ class Drink:
         listOfItemsToRemove = []
         self.newCounter = 0
         for element_time in self.newDict:
-            if current_time - element_time > iteration_interval * 2:
+            if current_time - element_time > iteration_interval * 10:
                 listOfItemsToRemove.append(element_time)
             else:
                 self.newCounter = self.newCounter + 1
@@ -124,7 +124,6 @@ def table():  # table needs: name, price, price difference, max, min
 
 @app.route('/data/table')
 def data_for_table():  # table needs: name, price, price difference, max, min
-    prices()
     table_data = build_data_for_table()
     return json.dumps(table_data)
 
@@ -143,7 +142,8 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
             drink.newDict[clock] = 1
     return ""
 
-
+# different views of this flask app will update at different times depending on the time they started
+# In case we want more views(table and chart) this must be fixed!
 @app.route('/data/chart')
 def prices():
     global current_time
@@ -153,8 +153,7 @@ def prices():
         timestamp = float(timestamp)
     if time.time() - current_time > iteration_interval:  # ensure that prices never update more often than interval
         current_time = time.time()
-        # simulation()
-
+        simulation()
         newly_bought = 0
         for drink in allDrinks:
             drink.newOrders()
@@ -202,7 +201,7 @@ def prices():
 
 current_time: float = time.time()
 start_time = float(time.time())
-iteration_interval = 5  # in seconds
+iteration_interval = 1  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",
