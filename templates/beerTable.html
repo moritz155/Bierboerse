@@ -15,20 +15,24 @@
 </style>
 <div id="table">
     <script>
-        let updateInterval = JSON.parse('{{iteration}}');
+        let updateInterval = JSON.parse('{{iteration}}') / 5;
         let beerList = JSON.parse('{{ beers | tojson }}'); //can only take strings
         let colors = JSON.parse('{{colorSet | tojson}}');
         let a = setInterval("updateData();", updateInterval * 1000);
         printTable();
 
         function printTable() {
+            console.log(beerList)
             let table = "<table style='width:100%'>";
             table += "<tr> <th>Getränk</th> <th>Preis</th> <th>Trend</th> <th>Min</th> <th>Max</th> </tr>"; //columns
-            for (let i = 0; i < beerList.length; i++) {
+            for (let drink in beerList) {
+                console.log()
                 table += "<tr>";
-                for (let j = 0; j < beerList[i].length; j++) {
-                    table += "<td>" + beerList[i][j] + "</td>"; // rows
-                }
+                table += "<td>" + beerList[drink]["name"] + "</td>"; // rows
+                table += "<td>" + beerList[drink]["price"] + "</td>"; // rows
+                table += "<td>" + beerList[drink]["price_diff"] + "</td>"; // rows
+                table += "<td>" + beerList[drink]["min"] + "</td>"; // rows
+                table += "<td>" + beerList[drink]["max"] + "</td>"; // rows
                 table += "</tr>";
             }
             table += "</table>"
@@ -41,7 +45,6 @@
                 printTable();
             });
         }
-
     </script>
 </div>
 </body>

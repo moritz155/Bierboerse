@@ -24,12 +24,14 @@
     </style>
     <div id="code"></div>
     <script>
-        let updateInterval = JSON.parse('{{iteration}}');
+        let updateInterval = JSON.parse('{{iteration}}') / 5;
         window.onload = function () {
 
 
             let dataList = [];
             let nameList = JSON.parse('{{ beers | tojson }}');
+            console.log(nameList)
+
             let colors = JSON.parse('{{colorSet | tojson}}');
             const chartData = loadNames();
             CanvasJS.addColorSet("customColors", colors);
@@ -53,7 +55,7 @@
                     verticalAlign: "top",
                     fontSize: 35,
                     fontColor: "dimGrey",
-                   // itemclick: toggleDataSeries
+                    // itemclick: toggleDataSeries
                 },
                 axisX: {
                     labelFormatter: function (e) {
@@ -61,7 +63,7 @@
                     }
                 },
                 dataPoints: {
-                  type : "line"
+                    type: "line"
                 },
                 data: chartData
             });
@@ -81,6 +83,7 @@
                         dataPoints: dataList[nameList[i]]
                     });
                 }
+                console.log(data)
                 return data;
             }
 
@@ -111,10 +114,11 @@
 
             function newDataHasNewValues(data) {
                 for (let drink in data) {
-                    let newEntry = data[drink][data[drink].length - 1];//last price of input is the new one
+                    let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
                     if (dataList[drink].length == 0) {
                         return true;
                     }
+                    console.log(dataList)
                     let latestPrice = dataList[drink][dataList[drink].length - 1];
                     if (newEntry[1] != latestPrice.y) { // diff !0 and !==
                         console.log("new: " + newEntry)
@@ -128,12 +132,13 @@
 
 
             function addData(data) {
+                console.log(data)
                 if (!newDataHasNewValues(data)) {
                     console.log("r");
                     return;
                 }
                 for (let drink in data) {
-                    let newEntry = data[drink][data[drink].length - 1];//last price of input is the new one
+                    let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
                     dataList[drink].push({x: newEntry[0], y: newEntry[1]}); //add the last Price
                     if (dataList[drink].length > 7) { // max 8 entries
                         let len = dataList[drink].length;
@@ -148,7 +153,7 @@
 
 
             function updateData() {
-                $.getJSON("http://127.0.0.1:8000/data/chart", addData);
+                $.getJSON("http://127.0.0.1:8000/data/table", addData);
             }
 
 
