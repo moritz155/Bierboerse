@@ -89,24 +89,6 @@ def analysis():
     print(changed)
 
 
-def build_data_for_table():
-    table_data = []
-    for drink in allDrinks:
-        single_drink_data = []
-        single_drink_data.append(drink.name)
-        single_drink_data.append(str(drink.price_history[-1])[0:3])  # current price
-        try:
-            single_drink_data.append(str(drink.price_history[-1] - drink.price_history[-2])[0:4])  # price difference
-        except IndexError:  # if price history has only one price
-            single_drink_data.append(0)
-        single_drink_data.append(str(drink.minPrice)[0:3])
-        single_drink_data.append(str(drink.maxPrice)[0:3])
-        table_data.append(single_drink_data)
-    global old_table_data
-    old_table_data = table_data
-    return table_data
-
-
 @app.route('/input')
 def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
@@ -160,15 +142,12 @@ def calculator():  # calculates the new prices and returns a json with all neces
             current_time = time.time()
             simulation()
             newly_bought = 0
+            counter = 0
+            changePrice = []  # takes drink if price was added in this period
             for drink in allDrinks:
                 drink.newOrders()
                 newly_bought = newly_bought + drink.newCounter
                 # print(drink.name + str(drink.newCounter))
-            counter = 0
-            changePrice = []  # takes drink if price was added in this period
-            table_data = []
-            # snd part of logic
-            for drink in allDrinks:
                 relative_part = 0.0
                 if not newly_bought == 0:
                     relative_part = drink.newCounter / newly_bought
