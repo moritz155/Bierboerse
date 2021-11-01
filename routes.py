@@ -102,6 +102,8 @@ def build_data_for_table():
         single_drink_data.append(str(drink.minPrice)[0:3])
         single_drink_data.append(str(drink.maxPrice)[0:3])
         table_data.append(single_drink_data)
+    global old_table_data
+    old_table_data = table_data
     return table_data
 
 
@@ -124,8 +126,11 @@ def table():  # table needs: name, price, price difference, max, min
 
 @app.route('/data/table')
 def data_for_table():  # table needs: name, price, price difference, max, min
-    table_data = build_data_for_table()
-    return json.dumps(table_data)
+    if time.time() - updated_last_time >= iteration_interval*2:
+        table_data = build_data_for_table()
+        return json.dumps(table_data)
+    print("aaiiaiai")
+    return old_table_data
 
 
 @app.route('/')
@@ -141,6 +146,7 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
             clock = float(time.time())
             drink.newDict[clock] = 1
     return ""
+
 
 # different views of this flask app will update at different times depending on the time they started
 # In case we want more views(table and chart) this must be fixed!
@@ -199,9 +205,11 @@ def prices():
     return json.dumps(result)
 
 
+old_table_data = []
+updated_last_time = time.time()
 current_time: float = time.time()
 start_time = float(time.time())
-iteration_interval = 1  # in seconds
+iteration_interval = 10  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",

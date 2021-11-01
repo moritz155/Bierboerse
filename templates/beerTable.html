@@ -18,8 +18,9 @@
         let updateInterval = JSON.parse('{{iteration}}');
         let beerList = JSON.parse('{{ beers | tojson }}'); //can only take strings
         let colors = JSON.parse('{{colorSet | tojson}}');
-        let myVar = setInterval("updateData();", updateInterval * 1000);
+        let a = setInterval("updateData();", updateInterval * 1000);
         printTable();
+
         function printTable() {
             let table = "<table style='width:100%'>";
             table += "<tr> <th>Getränk</th> <th>Preis</th> <th>Trend</th> <th>Min</th> <th>Max</th> </tr>"; //columns
@@ -35,8 +36,7 @@
         }
 
         function updateData() {
-            $.getJSON("http://127.0.0.1:8000/data/table", function(data)
-            {
+            $.getJSON("http://127.0.0.1:8000/data/table", function (data) {
                 beerList = data;
                 printTable();
             });
@@ -45,5 +45,6 @@
     </script>
 </div>
 </body>
+<script src="{{ url_for('static', filename='js/canvas.js/canvasjs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
 </html>
