@@ -43,14 +43,14 @@ class Drink:
     def newOrders(self):
         current_time = time.time()
         listOfItemsToRemove = []
-        self.newCounter = 0
+        self.newCounter = 0 # counts number of times this drink was bought in the period
         for element_time in self.newDict:
             if current_time - element_time > iteration_interval * 10:
-                listOfItemsToRemove.append(element_time)
+                listOfItemsToRemove.append(element_time) # items from last period -- not important anymore
             else:
                 self.newCounter = self.newCounter + 1
         for i in listOfItemsToRemove:
-            del self.newDict[i]
+            del self.newDict[i] # cleanup newDict again
 
 
 app = Flask(__name__)
@@ -141,18 +141,19 @@ def calculator():  # calculates the new prices and returns a json with all neces
         if time.time() - current_time > iteration_interval:  # ensure that prices never update more often than interval
             current_time = time.time()
             simulation()
-            newly_bought = 0
+            newly_bought = 0  # sum of all drinks that were newly bought
             counter = 0
             changePrice = []  # takes drink if price was added in this period
             for drink in allDrinks:
                 drink.newOrders()
                 newly_bought = newly_bought + drink.newCounter
+            for drink in allDrinks:
                 # print(drink.name + str(drink.newCounter))
                 relative_part = 0.0
                 if not newly_bought == 0:
                     relative_part = drink.newCounter / newly_bought
                 if relative_part >= 0.25:  # relative part must be higher than 25% to increase price
-                    drink.addNewRandomPrice(True, True)
+                    drink.addNewRandomPrice(price_increase=True, change_price=True)
                     changePrice.append(drink)
                     continue
                 elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
