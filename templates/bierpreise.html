@@ -24,6 +24,7 @@
     </style>
     <div id="code"></div>
     <script>
+
         let updateInterval = JSON.parse('{{iteration}}') / 5;
         window.onload = function () {
 
@@ -40,12 +41,14 @@
             let chart1 = new CanvasJS.Chart("chartContainer", {
                 zoomEnabled: true,
                 title: {
-                    text: "Getränkepreise"
+                    text: "Getränkepreise",
+                    fontColor: "white"
                 },
                 colorSet: "customColors",
                 axisY: {
                     suffix: "€",
-                    includeZero: true
+                    includeZero: true,
+                    labelFontColor: "white"
                 },
                 toolTip: {
                     shared: true
@@ -54,7 +57,7 @@
                     cursor: "pointer",
                     verticalAlign: "top",
                     fontSize: 35,
-                    fontColor: "dimGrey",
+                    fontColor: "white",
                     // itemclick: toggleDataSeries
                 },
                 axisX: {
@@ -63,18 +66,18 @@
                     }
                 },
                 dataPoints: {
-                    type: "line"
+                    type: "spline"
                 },
-                data: chartData
+                data: chartData,
+                backgroundColor: "black"
             });
-
 
             function loadNames() {
                 initializeDataList();
                 let data = [];
                 for (let i = 0; i < nameList.length; i++) {
                     data.push({
-                        type: "line",
+                        type: "spline",
                         //xValueType: "dateTime",
                         yValueFormatString: "€##.00",
                         //xValueFormatString: "hh:mm:ss TT",
@@ -173,6 +176,7 @@
 
 
         }
+
     </script>
     </div>
 
