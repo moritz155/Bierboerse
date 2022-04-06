@@ -18,3 +18,9 @@
 + if relative part > 25 % --> price is increased
 + price first drink that was not boùght in period is decreased
 + price of another drink is decreased (not totally true, needs to be checked again)
+
+
+## Thoughts
++ Price generation overhaul
++ probability of direction of price change; amount of price change should relate to share in sales over the last iterations
++ have a random amount of drinks 5 - 30 % change each iteration
