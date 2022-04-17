@@ -1,0 +1,19 @@
+h1 {
+    font-family: Impact;
+    font-size: 70px;
+    text-align: center;
+}
+
+.buttons {
+    font-weight: bolder;
+    font-size: xx-large;
+    width: 100%;
+    display: block;
+}
+
+.icon-remove-sign {
+    cursor: pointer;
+}
+.total{
+
+}
