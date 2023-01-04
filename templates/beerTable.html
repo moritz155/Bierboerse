@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Stock Exchange </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
 
 
 <style>
     table, th, td {
-        border: 1px solid black;
         font-size: xx-large;
     }
 </style>
@@ -23,8 +23,8 @@
 
         function printTable() {
             console.log(beerList)
-            let table = "<table style='width:100%'>";
-            table += "<tr> <th>Getränk</th> <th>Preis</th> <th>Trend</th> <th>Min</th> <th>Max</th> </tr>"; //columns
+            let table = "<table style='width:100%' class='table table-striped table-primary'>";
+            table += "<tr style='border-bottom: 2px solid'> <th>Getränk</th> <th>Preis</th> <th>Trend</th> <th>Min</th> <th>Max</th> </tr>"; //columns
             for (let drink in beerList) {
                 console.log()
                 table += "<tr>";
