@@ -141,6 +141,10 @@
                     return;
                 }
                 for (let drink in data) {
+                   // let newEntry = data[drink].price;
+                    /*
+                    last entry of history is not equal to "price". Tables use price and this graph usees history though. --> different prices that are displayed!!!
+                     */
                     let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
                     dataList[drink].push({x: newEntry[0], y: newEntry[1]}); //add the last Price
                     if (dataList[drink].length > 7) { // max 8 entries

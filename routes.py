@@ -197,7 +197,7 @@ old_table_data = []
 updated_last_time = time.time()
 current_time: float = time.time()
 start_time = float(time.time())
-iteration_interval = 20  # in seconds
+iteration_interval = 5  # in seconds
 data = {}
 customColorSet = ["#FF0000",
                   "#FF8F00",
