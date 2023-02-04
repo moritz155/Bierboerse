@@ -62,16 +62,23 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
     let beerList = {};
-    updateData();
-    //printTable();
-    let a = setInterval("updateData();", 1 * 1000); // in seconds
 
-    function updateData() {
-        $.getJSON("http://127.0.0.1:8000/data/table", function (data) {
-            beerList = data;
-        });
-        updateTable();
-    }
+    const socket = new WebSocket('ws://' + location.host + '/echo');
+    console.log('ws://' + location.host + '/echo')
+     const log = (text, color) => {
+        document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
+    };
+    socket.addEventListener('message', ev => { // receive message
+        console.log(typeof ev.data)
+        if (ev.data != "TABLE"){
+            console.log('NEW DATA!!!')
+            beerList = JSON.parse(ev.data);
+            updateTable();
+        }
+    });
+    socket.addEventListener('open', (event) => {
+        socket.send('TABLE');
+    });
 
     function updateTable() {
         if (!document.getElementById("table_body").innerHTML.replace(/\s/g, '')) {
