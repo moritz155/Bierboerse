@@ -16,9 +16,27 @@
 <div id="table">
     <script>
         let updateInterval = JSON.parse('{{iteration}}') / 5;
-        let beerList = JSON.parse('{{ beers | tojson }}'); //can only take strings
+        let beerList = {}; //initialize
         let colors = JSON.parse('{{colorSet | tojson}}');
         let a = setInterval("updateData();", updateInterval * 1000);
+
+        const socket = new WebSocket('ws://' + location.host + '/echo');
+        console.log('ws://' + location.host + '/echo')
+         const log = (text, color) => {
+            document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
+        };
+        socket.addEventListener('message', ev => { // receive message
+            console.log(typeof ev.data)
+            if (ev.data != "INPUT"){
+                console.log('NEW DATA!!!')
+                beerList = JSON.parse(ev.data);
+                printTable();
+            }
+        });
+        socket.addEventListener('open', (event) => {
+            socket.send('INPUT');
+        });
+
         printTable();
 
         function printTable() {
@@ -37,13 +55,6 @@
             }
             table += "</table>"
             document.getElementById("table").innerHTML = table;
-        }
-
-        function updateData() {
-            $.getJSON("http://127.0.0.1:8000/data/table", function (data) {
-                beerList = data;
-                printTable();
-            });
         }
     </script>
 </div>

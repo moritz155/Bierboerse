@@ -24,16 +24,41 @@
     </style>
     <div id="code"></div>
     <script>
-
-        let updateInterval = JSON.parse('{{iteration}}') / 5;
         window.onload = function () {
+            const socket = new WebSocket('ws://' + location.host + '/echo');
+            console.log('ws://' + location.host + '/echo')
+             const log = (text, color) => {
+                document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
+            };
+            socket.addEventListener('message', ev => { // receive message
+                console.log(typeof ev.data)
+                if (ev.data != "CHART"){
+                    let a = JSON.parse(ev.data)
+                    console.log('NEW DATA!!!')
+                    addData(a);
+                }
+            });
+            socket.addEventListener('open', (event) => {
+                socket.send('CHART');
+            });
 
-
+            let updateInterval = JSON.parse('{{iteration}}') / 5;
             let dataList = [];
             let nameList = JSON.parse('{{ beers | tojson }}');
             console.log(nameList)
 
             let colors = JSON.parse('{{colorSet | tojson}}');
+            try {
+                let data = JSON.parse('{{data | tojson}}');
+                console.log("Data from frontend is here: ");
+                console.log(data);
+                if (Object.keys(data).length !== 0){
+                    console.log("Update");
+                    addData(data);
+                }
+            } catch(error){
+                console.log('LOLOLO')
+            }
             const chartData = loadNames();
             CanvasJS.addColorSet("customColors", colors);
 
@@ -117,6 +142,7 @@
 
             function newDataHasNewValues(data) {
                 for (let drink in data) {
+                    console.log(data[drink])
                     let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
                     if (dataList[drink].length == 0) {
                         return true;
@@ -154,15 +180,7 @@
                 }
                 updateLegend();
                 chart1.render();
-
-
             }
-
-
-            function updateData() {
-                $.getJSON("http://127.0.0.1:8000/data/table", addData);
-            }
-
 
             function toggleDataSeries(e) {
                 e.dataSeries.visible = !(typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible);
@@ -170,11 +188,6 @@
             }
 
             initializeLegend();
-            updateData();
-
-            setInterval(function () {
-                updateData();
-            }, updateInterval * 1000);
 
             chart1.render();
 

@@ -1,5 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 import time, json, random
+from flask_sock import Sock
+import requests
+from websocket import create_connection
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class Drink:
@@ -43,17 +48,19 @@ class Drink:
     def newOrders(self):
         current_time = time.time()
         listOfItemsToRemove = []
-        self.newCounter = 0 # counts number of times this drink was bought in the period
+        self.newCounter = 0  # counts number of times this drink was bought in the period
         for element_time in self.newDict:
             if current_time - element_time > iteration_interval * 10:
-                listOfItemsToRemove.append(element_time) # items from last period -- not important anymore
+                listOfItemsToRemove.append(element_time)  # items from last period -- not important anymore
             else:
                 self.newCounter = self.newCounter + 1
         for i in listOfItemsToRemove:
-            del self.newDict[i] # cleanup newDict again
+            del self.newDict[i]  # cleanup newDict again
 
 
 app = Flask(__name__)
+sock = Sock(app)
+global_socks = []
 app.config['SECRET_KEY'] = 'secret!'
 
 
@@ -62,38 +69,51 @@ def update_data():  # data returns the last eight prices only
         mult = 0
         list = []
         for price in drink.price_history:
-            list.append((start_time + 30 * mult, round(price,1)))
+            list.append((start_time + 30 * mult, round(price, 1)))
             mult = mult + 1
         if len(list) > 8:
             data[drink.name] = list[-8:]
         else:
             data[drink.name] = list
 
+
+@sock.route('/echo')
+def echo(sock):
+    while True:
+        data = sock.receive()
+        print(data)
+        if data == 'CHART' or data == 'TABLE' or data == 'INPUT':
+            global global_socks
+            global_socks.append(sock)
+        if len(global_socks) > 0:
+            for sock in global_socks:
+                sock.send(data)
+        else:
+            sock.send(data)
+
+
 @app.route('/input')
 def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
 
 
-@app.route('/fullScreen')
-def fullScreen():
-    return render_template('fullScreen_test.html', beers=beers_names, colorSet=customColorSet,
-                           iteration=iteration_interval)
-
-
 @app.route('/table')
 def table():  # table needs: name, price, price difference, max, min
-    table_data = calculator()
-    return render_template('beerTable.html', beers=table_data, colorSet=customColorSet, iteration=iteration_interval)
+    return render_template('beerTable.html', colorSet=customColorSet, iteration=iteration_interval)
 
 
-@app.route('/data/table')
+@app.route('/data')
 def data_for_table():  # table needs: name, price, price difference, max, min
-    return calculator()
+    ws = create_connection("ws://localhost:8000/echo")
+    ws.send(json.dumps(calculator()))
+    ws.close()
+    return {}
 
 
-@app.route('/')
-def index():
-    return render_template('bierpreise.html', beers=beers_names, iteration=iteration_interval, colorSet=customColorSet)
+@app.route('/', defaults={'data': {}})
+def index(data):
+    return render_template('bierpreise.html', beers=beers_names, iteration=iteration_interval,
+                           colorSet=customColorSet, data=data)
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
@@ -110,57 +130,60 @@ def calculator():  # calculates the new prices and returns a json with all neces
     # create json object with following attributes
     # name, price, price difference, max, min
     global current_time, updated_last_time, old_table_data
-    if time.time() - updated_last_time >= iteration_interval:  # ensure that prices never update more often than interval
-        updated_last_time = time.time()
-        current_time = time.time()
-        all_drinks_data = {}
-        newly_bought = 0  # sum of all drinks that were newly bought
-        counter = 0
-        changePrice = []  # takes drink if price was added in this period
-        for drink in allDrinks:  # calculate all ordered drinks --> store in variable newly_bought
-            drink.newOrders()
-            newly_bought = newly_bought + drink.newCounter
-        for drink in allDrinks:
-            # calculate relative parts
-            relative_part = 0.0
-            if not newly_bought == 0:
-                relative_part = drink.newCounter / newly_bought
-            # increase prices if relative part higher than X
-            if relative_part >= drink_threshold:  # relative part must be higher than 25% to increase price
-                drink.addNewRandomPrice(price_increase=True, change_price=True)
-                changePrice.append(drink)
-                continue
-            elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
-                counter = 1  # ensures that only one price will decrease
-                drink.addNewRandomPrice(False, True)
-                changePrice.append(drink)
-                continue
-        addPriceTo = [x for x in allDrinks if
-                      x not in changePrice]  # includes all drinks that do not have enough prices
-        for drink in addPriceTo:
-            drink.addNewRandomPrice(True, False)  # all drinks now have same number of prices
-            update_data()
-        for drink in allDrinks:
-            # part for table data
-            single_drink_dict = {"name": drink.name, "price": str(drink.price_history[-1])[0:3]}
-            try:
-                single_drink_dict["price_diff"] = str(drink.price_history[-1] - drink.price_history[-2])[0:4]
-            except IndexError:  # if price history has only one price
-                single_drink_dict["price_diff"] = 0
-            single_drink_dict["min"] = str(drink.minPrice)[0:3]
-            single_drink_dict["max"] = str(drink.maxPrice)[0:3]
-            history_list = []
+    updated_last_time = time.time()
+    current_time = time.time()
+    all_drinks_data = {}
+    newly_bought = 0  # sum of all drinks that were newly bought
+    counter = 0
+    changePrice = []  # takes drink if price was added in this period
+    for drink in allDrinks:  # calculate all ordered drinks --> store in variable newly_bought
+        drink.newOrders()
+        newly_bought = newly_bought + drink.newCounter
+    for drink in allDrinks:
+        # calculate relative parts
+        relative_part = 0.0
+        if not newly_bought == 0:
+            relative_part = drink.newCounter / newly_bought
+        # increase prices if relative part higher than X
+        if relative_part >= drink_threshold:  # relative part must be higher than 25% to increase price
+            drink.addNewRandomPrice(price_increase=True, change_price=True)
+            changePrice.append(drink)
+            continue
+        elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
+            counter = 1  # ensures that only one price will decrease
+            drink.addNewRandomPrice(False, True)
+            changePrice.append(drink)
+            continue
+    addPriceTo = [x for x in allDrinks if
+                  x not in changePrice]  # includes all drinks that do not have enough prices
+    for drink in addPriceTo:
+        drink.addNewRandomPrice(True, False)  # all drinks now have same number of prices
+        update_data()
+    for drink in allDrinks:
+        # part for table data
+        single_drink_dict = {"name": drink.name, "price": str(drink.price_history[-1])[0:3]}
+        try:
+            single_drink_dict["price_diff"] = str(drink.price_history[-1] - drink.price_history[-2])[0:4]
+        except IndexError:  # if price history has only one price
+            single_drink_dict["price_diff"] = 0
+        single_drink_dict["min"] = str(drink.minPrice)[0:3]
+        single_drink_dict["max"] = str(drink.maxPrice)[0:3]
+        history_list = []
 
-            timestamp = request.args.get('timestamp')
-            if timestamp is not None:
-                timestamp = float(timestamp)
-            for i in data[drink.name]:
-                if timestamp is None or i[1] >= timestamp:
-                    history_list.append(i)
-            single_drink_dict["history"] = history_list
-            all_drinks_data[drink.name] = single_drink_dict
-        old_table_data = all_drinks_data
+        timestamp = request.args.get('timestamp')
+        if timestamp is not None:
+            timestamp = float(timestamp)
+        for i in data[drink.name]:
+            if timestamp is None or i[1] >= timestamp:
+                history_list.append(i)
+        single_drink_dict["history"] = history_list
+        all_drinks_data[drink.name] = single_drink_dict
+    old_table_data = all_drinks_data
     return old_table_data
+
+
+def calc_new_data():
+    r = requests.get('http://127.0.0.1:8000/data')  # send request to new data
 
 
 old_table_data = []
@@ -188,7 +211,18 @@ Drink7 = Drink("Luft", [1.5])
 allDrinks = [Drink1, Drink2, Drink3, Drink4, Drink5, Drink6, Drink7]
 clock_for_analysis = time.time()
 recentlyChangedPrices = []
-beers_names = []
+
+### Create a scheduler that executes /calculates new data every {iteration_interval} seconds
+beers_names = []  # Create the background scheduler
+scheduler = BackgroundScheduler()
+# Create the job
+scheduler.add_job(func=calc_new_data, trigger="interval", seconds=iteration_interval)
+# Start the scheduler
+scheduler.start()
+
+# /!\ IMPORTANT /!\ : Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
+
 for beer in allDrinks:
     beers_names.append(beer.name)
 app.run('127.0.0.1', 8000, debug=True)
