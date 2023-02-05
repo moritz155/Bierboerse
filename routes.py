@@ -51,10 +51,10 @@ def data_for_table():  # table needs: name, price, price difference, max, min
     return {}
 
 
-@app.route('/', defaults={'data': {}})
-def index(data):
+@app.route('/')
+def index():
     return render_template('bierpreise.html', beers=beers_names, iteration=iteration_interval,
-                           colorSet=customColorSet, data=data)
+                           colorSet=customColorSet)
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
@@ -70,6 +70,7 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
 
 
 def calc_new_data():
+    print('HERE')
     r = requests.get('http://127.0.0.1:8000/data')  # send request to new data
 
 
@@ -88,11 +89,11 @@ beers_names = ["Gösser","Gustl","Radler","Tyskie","Cola","Wein","Luft"]
 ### Create a scheduler that executes /calculates new data every {iteration_interval} seconds
 scheduler = BackgroundScheduler()
 # Create the job
-scheduler.add_job(func=calc_new_data, trigger="interval", seconds=iteration_interval)
+scheduler.add_job(func=calc_new_data, trigger='interval', seconds=iteration_interval)
 # Start the scheduler
 scheduler.start()
 
 # /!\ IMPORTANT /!\ : Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
-app.run('127.0.0.1', 8000, debug=True)
+app.run('127.0.0.1', 8000, debug=True, use_reloader=False)

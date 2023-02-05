@@ -8,9 +8,12 @@ def update_data():  # data returns the last eight prices only
     for drink in drinks:
         mult = 0
         list = []
+        counter = 0
         for price in drink.price_history:
-            list.append((start_time + 30 * mult, round(price, 1)))
+            list.append((counter, round(price, 1)))
             mult = mult + 1
+            counter += 1
+        counter -= 1
         if len(list) > 8:
             data[drink.name] = list[-8:]
         else:

@@ -27,38 +27,26 @@
         window.onload = function () {
             const socket = new WebSocket('ws://' + location.host + '/echo');
             console.log('ws://' + location.host + '/echo')
-         
+
             // receive message
-            socket.addEventListener('message', ev => { 
-                if (ev.data != "CHART"){
-                    let a = JSON.parse(ev.data)
-                    console.log('NEW DATA!!!')
+            socket.addEventListener('message', ev => {
+                if (ev.data != "CHART") {
+                    let a = JSON.parse(ev.data);
+                    console.log('NEW DATA!!!');
+                    console.log(a)
                     addData(a);
                 }
             });
 
-             //initializer
+            //initializer
             socket.addEventListener('open', (event) => {
                 socket.send('CHART');
             });
-
-            let updateInterval = JSON.parse('{{iteration}}') / 5; //######################
             let dataList = [];
             let nameList = JSON.parse('{{ beers | tojson }}');
             console.log(nameList)
 
             let colors = JSON.parse('{{colorSet | tojson}}');
-            try {
-                let data = JSON.parse('{{data | tojson}}');
-                console.log("Data from frontend is here: ");
-                console.log(data);
-                if (Object.keys(data).length !== 0){
-                    console.log("Update");
-                    addData(data);
-                }
-            } catch(error){
-                console.log('LOLOLO')
-            }
             const chartData = loadNames();
             CanvasJS.addColorSet("customColors", colors);
 
@@ -161,21 +149,30 @@
 
             //#########################################
             function addData(data) {
-                if (!newDataHasNewValues(data)) {
+                /*if (!newDataHasNewValues(data)) {
                     console.log("r");
                     return;
                 }
+                 */
+                let counter = 0
                 for (let drink in data) {
-                   // let newEntry = data[drink].price;
+                    // let newEntry = data[drink].price;
                     /*
                     last entry of history is not equal to "price". Tables use price and this graph usees history though. --> different prices that are displayed!!!
                      */
                     let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
-                    dataList[drink].push({x: newEntry[0], y: newEntry[1]}); //add the last Price
-                    if (dataList[drink].length > 7) { // max 8 entries
-                        let len = dataList[drink].length;
-                        dataList[drink].splice(0, len - 8);
+                    let x_axis_value;
+                    if (Object.values(dataList[drink].slice(-1))[0] == undefined) {
+                        x_axis_value = 0
+                    } else {
+                        x_axis_value = Object.values(Object.values(dataList[drink].slice(-1))[0])[0] + 1
                     }
+                    dataList[drink].push({x: x_axis_value, y: newEntry[1]}); //add the last Price
+                    if (dataList[drink].length > 6) { // max 7 entries
+                        let len = dataList[drink].length;
+                        dataList[drink].splice(0, len - 7);
+                    }
+                    counter = counter + 1
                 }
                 updateLegend();
                 chart1.render();
