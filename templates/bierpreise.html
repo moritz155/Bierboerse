@@ -27,22 +27,22 @@
         window.onload = function () {
             const socket = new WebSocket('ws://' + location.host + '/echo');
             console.log('ws://' + location.host + '/echo')
-             const log = (text, color) => {
-                document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
-            };
-            socket.addEventListener('message', ev => { // receive message
-                console.log(typeof ev.data)
+         
+            // receive message
+            socket.addEventListener('message', ev => { 
                 if (ev.data != "CHART"){
                     let a = JSON.parse(ev.data)
                     console.log('NEW DATA!!!')
                     addData(a);
                 }
             });
+
+             //initializer
             socket.addEventListener('open', (event) => {
                 socket.send('CHART');
             });
 
-            let updateInterval = JSON.parse('{{iteration}}') / 5;
+            let updateInterval = JSON.parse('{{iteration}}') / 5; //######################
             let dataList = [];
             let nameList = JSON.parse('{{ beers | tojson }}');
             console.log(nameList)
@@ -142,7 +142,7 @@
 
             function newDataHasNewValues(data) {
                 for (let drink in data) {
-                    console.log(data[drink])
+                    //console.log(data[drink])
                     let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
                     if (dataList[drink].length == 0) {
                         return true;
@@ -159,9 +159,8 @@
                 return false;
             }
 
-
+            //#########################################
             function addData(data) {
-                console.log(data)
                 if (!newDataHasNewValues(data)) {
                     console.log("r");
                     return;
