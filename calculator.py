@@ -1,111 +1,130 @@
 from flask import Flask, render_template, request, jsonify
 import time, json, random
 from drink import Drink
+from PriceChange import PriceChange
 
 
-def update_data():  # data returns the last eight prices only
+# def update_data():  # data returns the last eight prices only
+#     drinks = Drink.get_allDrinks()
+#     for drink in drinks:
+#         mult = 0
+#         list = []
+#         counter = 0
+#         for price in drink.price_history:
+#             list.append((counter, round(price, 1)))
+#             mult = mult + 1
+#             counter += 1
+#         counter -= 1
+#         if len(list) > 8:
+#             data[drink.name] = list[-8:]
+#         else:
+#             data[drink.name] = list
+
+
+def calculator():
+    data_set = {}
+    drink_threshold = get_drink_threshold()
     drinks = Drink.get_allDrinks()
+    total_sales = get_total_sales()  # last 2 periods
+
     for drink in drinks:
-        mult = 0
-        list = []
-        counter = 0
-        for price in drink.price_history:
-            list.append((counter, round(price, 1)))
-            mult = mult + 1
-            counter += 1
-        counter -= 1
-        if len(list) > 8:
-            data[drink.name] = list[-8:]
-        else:
-            data[drink.name] = list
+        relative_part = calc_relative_part(drink.newCounter, total_sales)  # drink.orders, sales
+        print(relative_part)
+        if above_threshold(relative_part, drink_threshold):
+            change_price(drink=drink, interval_start=0.3, price_change=PriceChange.UP)
+        elif randomly_change_price(drink):
+            direction = get_random_direction()
+            change_price(drink=drink, interval_start=0.1, price_change=direction)
+        else:  # price was not changed --> old price = current price
+            update_price_history(drink, drink.price)
+
+        data_set[drink.name] = {
+            "name": drink.name,
+            "price": drink.price,
+            "price_diff": get_price_difference(drink),
+            "min": str(drink.minPrice)[0:3],
+            "max": str(drink.maxPrice)[0:3],
+            "history": drink.price_history
+        }
+
+    print(data_set)
+    return data_set
 
 
-def calculator():  # calculates the new prices and returns a json with all necessary datapoints
-    # create json object with following attributes
-    # name, price, price difference, max, min
-    global current_time, updated_last_time, old_table_data
-    updated_last_time = time.time()
-    current_time = time.time()
-    all_drinks_data = {}
-    newly_bought = 0  # sum of all drinks that were newly bought
-    counter = 0
-    changePrice = []  # takes drink if price was added in this period
+# interval is always 0.3 percent big. It influences the size of the price change.
+# EXAMPLE: interval_start=0.3; minPrice=0.6; maxPrice=1.6;
+# --> interval goes from 0.3 to 0.6; deviation = 1.6 - 0.6 = 1;
+# --> price_difference = ((random number between 3 and 6) / 10) * 1
+# --> In this case a price change between 30 cents and 60 cents would be possible
+# --> The distance between the min and max price and the interval influence the price change
+def change_price(drink, interval_start, price_change):
+    if interval_start >= 0.7:
+        print(f'Start of interval - {interval_start} - is too high; Should be less than 0.7')
+    deviation = drink.maxPrice - drink.minPrice
+    interval_end = interval_start + 0.3
+    old_price = drink.price
+    price_difference = (random.randint(interval_start * 10, interval_end * 10) / 10) * deviation
+    if price_change == PriceChange.UP:
+        drink.setPrice(old_price + price_difference)
+    elif price_change == PriceChange.DOWN:
+        drink.setPrice(old_price - price_difference)
+    # price history is updated in function "setPrice";
+    # Reason: calculated price could be lower or higher than allowed i.e. maxPrice, in that case it needs to be adjusted
+
+
+def randomly_change_price(drink):
+    draw = random.choices(population=[1, 2],
+                          weights=[drink.price_change_prob, 1 - drink.price_change_prob],
+                          k=1)
+    if draw[0] == 1:
+        print('Price Change')
+        drink.price_change_prob = 0.2
+        return True
+    else:
+        print('No Price Change')
+        drink.price_change_prob += 0.1
+        return False
+
+
+def get_total_sales():
     drinks = Drink.get_allDrinks()
-
-    for drink in drinks:  # calculate all ordered drinks --> store in variable newly_bought
-        drink.newOrders()
-        newly_bought = newly_bought + drink.newCounter
+    total_sales = 0
     for drink in drinks:
-        # calculate relative parts
-        relative_part = 0.0
-        if not newly_bought == 0:
-            relative_part = drink.newCounter / newly_bought
-        # increase prices if relative part higher than X
-        if relative_part >= drink_threshold:  # relative part must be higher than 25% to increase price
-            drink.addNewRandomPrice(price_increase=True, change_price=True)
-            changePrice.append(drink)
-            continue
-        elif relative_part == 0 and counter == 0:  # decrease price of first drink that wasnt bought in this period
-            counter = 1  # ensures that only one price will decrease
-            drink.addNewRandomPrice(False, True)
-            changePrice.append(drink)
-            continue
-    addPriceTo = [x for x in drinks if
-                x not in changePrice]  # includes all drinks that do not have enough prices
-    for drink in addPriceTo:
-        drink.addNewRandomPrice(True, False)  # all drinks now have same number of prices
-        update_data()
-    for drink in drinks:
-        # part for table data
-        single_drink_dict = {"name": drink.name, "price": str(drink.price_history[-1])[0:3]}
-        try:
-            single_drink_dict["price_diff"] = str(drink.price_history[-1] - drink.price_history[-2])[0:4]
-        except IndexError:  # if price history has only one price
-            single_drink_dict["price_diff"] = 0
-        single_drink_dict["min"] = str(drink.minPrice)[0:3]
-        single_drink_dict["max"] = str(drink.maxPrice)[0:3]
-        history_list = []
-
-        timestamp = request.args.get('timestamp')
-        if timestamp is not None:
-            timestamp = float(timestamp)
-        for i in data[drink.name]:
-            if timestamp is None or i[1] >= timestamp:
-                history_list.append(i)
-        single_drink_dict["history"] = history_list
-        all_drinks_data[drink.name] = single_drink_dict
-    old_table_data = all_drinks_data
-    return old_table_data
+        total_sales += drink.newOrders()
+    return total_sales
 
 
+def get_random_direction():
+    if random.randint(0, 1) == 0:
+        return PriceChange.UP
+    else:
+        return PriceChange.DOWN
 
 
+def update_price_history(drink, old_price):
+    drink.price_history.append(round(old_price, 1))
 
 
-# old_table_data = []
-# updated_last_time = time.time()
-# current_time: float = time.time()
-start_time = float(time.time())
-# iteration_interval = 5  # in seconds
-data = {}
+def get_price_difference(drink):
+    # import ipdb; ipdb.set_trace()
+    print(drink.price_history)
+    return abs(drink.price - drink.price_history[-1])
+
+
+def calc_relative_part(drink_sales, total_sales):
+    if drink_sales == 0:
+        return 0
+    else:
+        return drink_sales / total_sales  # can be between 0 and 1
+
+
+def above_threshold(relative_part, threshold):
+    return relative_part > threshold
+
+
+def get_drink_threshold():
+    return drink_threshold
+
+
 drink_threshold = 0.25
-# customColorSet = ["#FF0000",
-#                   "#FF8F00",
-#                   "#4BF70B",
-#                   "#0BF7C5",
-#                   "#0B0FF7",
-#                   "#C90BF7",
-#                   "#F70B6F"
-#                   ]
 
-# allDrinks = [
-# Drink("Gösser", [2.10]), 
-# Drink("Gustl", [2.0]), 
-# Drink("Radler", [2.3]), 
-# Drink("Tyskie", [2.2]),
-# Drink("Cola", [1.9]),
-# Drink("Wein", [1.7]),
-# Drink("Luft", [1.5])]
-# beers_names = ["Gösser","Gustl","Radler","Tyskie","Cola","Wein","Luft"]
-# clock_for_analysis = time.time()
-# recentlyChangedPrices = []
