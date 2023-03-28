@@ -11,12 +11,21 @@ class Drink:
         self.newDict = {}  # gives every order a time; size of dict is equal to amount of orders
         self.newCounter = 0  # counter of orders in a period
         self.price_was_changed = 0  # counts the times the price is changed
-
-    def get_allDrinks():
-        return allDrinks
+        self.price_change_prob = 0.2
 
     #def addPrice(self, newPrice):
      #   self.price_history.append(newPrice)
+
+    def setPrice(self, price):
+        newPrice = 0
+        if price >= self.maxPrice:
+            newPrice = self.maxPrice
+        elif price <= self.minPrice:
+            newPrice = self.minPrice
+        else:
+            newPrice = price
+        self.price = round(newPrice, 1)
+        self.price_history.append(newPrice)
 
     def update_recentlyChangedPrices(self):
         for drink in recentlyChangedPrices:
@@ -56,8 +65,9 @@ class Drink:
             del self.newDict[i]  # cleanup newDict again
         return self.newCounter
 
-
-
+    @staticmethod
+    def get_allDrinks():
+        return allDrinks
 
 # old_table_data = []
 # updated_last_time = time.time()

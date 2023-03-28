@@ -12,8 +12,9 @@
             height: 100%;
             background-size: cover;
             background-repeat: no-repeat;
-
-
+        }
+        .canvasjs-chart-credit{
+            display: none;
         }
 
 
@@ -161,13 +162,16 @@
                     last entry of history is not equal to "price". Tables use price and this graph usees history though. --> different prices that are displayed!!!
                      */
                     let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
+                    console.log(data[drink]['price']);
+                    newEntry = data[drink]['price'];
                     let x_axis_value;
                     if (Object.values(dataList[drink].slice(-1))[0] == undefined) {
                         x_axis_value = 0
                     } else {
                         x_axis_value = Object.values(Object.values(dataList[drink].slice(-1))[0])[0] + 1
                     }
-                    dataList[drink].push({x: x_axis_value, y: newEntry[1]}); //add the last Price
+                    console.log(newEntry)
+                    dataList[drink].push({x: x_axis_value, y: newEntry}); //add the last Price
                     if (dataList[drink].length > 6) { // max 7 entries
                         let len = dataList[drink].length;
                         dataList[drink].splice(0, len - 7);
