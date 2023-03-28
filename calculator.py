@@ -29,7 +29,7 @@ def calculator():
 
     for drink in drinks:
         relative_part = calc_relative_part(drink.newCounter, total_sales)  # drink.orders, sales
-        print(relative_part)
+
         if above_threshold(relative_part, drink_threshold):
             change_price(drink=drink, interval_start=0.3, price_change=PriceChange.UP)
         elif randomly_change_price(drink):
@@ -46,8 +46,9 @@ def calculator():
             "max": str(drink.maxPrice)[0:3],
             "history": drink.price_history
         }
+    #print(data_set)
+    #with open("output.txt", "w") as f: f.write(str(data_set) + "\n\n")
 
-    print(data_set)
     return data_set
 
 
@@ -77,11 +78,9 @@ def randomly_change_price(drink):
                           weights=[drink.price_change_prob, 1 - drink.price_change_prob],
                           k=1)
     if draw[0] == 1:
-        print('Price Change')
         drink.price_change_prob = 0.2
         return True
     else:
-        print('No Price Change')
         drink.price_change_prob += 0.1
         return False
 
@@ -107,7 +106,6 @@ def update_price_history(drink, old_price):
 
 def get_price_difference(drink):
     # import ipdb; ipdb.set_trace()
-    print(drink.price_history)
     return abs(drink.price - drink.price_history[-1])
 
 
