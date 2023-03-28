@@ -24,16 +24,23 @@ def output():
 
 def sort(drinks_dict):
     result = ''
+    total_pct_change = 0
     for drink in drinks_dict:
         if 'history' in drinks_dict[drink]:
             avg_price = sum(drinks_dict[drink]['history']) / len(drinks_dict[drink]['history'])
             max_price = max(drinks_dict[drink]['history'])
+            orig_price = drinks_dict[drink]['history'][0]
         else:
             avg_price = drinks_dict[drink]['price']
             max_price = drinks_dict[drink]['max']
-        result += f'{drink} had an average price of {avg_price:.2f} and a max price of {max_price:.2f}.\n'
+            orig_price = drinks_dict[drink]['price']
+        pct_change = (avg_price - orig_price) / orig_price * 100
+        print(f"{drink} had an average price of {avg_price:.2f}, a max price of {max_price:.2f} \t| ")
+        print(f"{pct_change:.2f}% price change.\n")
+        total_pct_change += pct_change
+    total_pct_change /= len(drinks_dict)
+    print(f'The total average price change was: {total_pct_change:.2f} %')
 
-    print(result)
 
 
 output()
