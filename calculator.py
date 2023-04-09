@@ -3,24 +3,7 @@ import time, json, random
 from drink import Drink
 from PriceChange import PriceChange
 
-
-# def update_data():  # data returns the last eight prices only
-#     drinks = Drink.get_allDrinks()
-#     for drink in drinks:
-#         mult = 0
-#         list = []
-#         counter = 0
-#         for price in drink.price_history:
-#             list.append((counter, round(price, 1)))
-#             mult = mult + 1
-#             counter += 1
-#         counter -= 1
-#         if len(list) > 8:
-#             data[drink.name] = list[-8:]
-#         else:
-#             data[drink.name] = list
-
-
+# If no drinks are purchased there is a small tendency to increase the prices rather than to decrease them.
 def calculator():
     data_set = {}
     drink_threshold = get_drink_threshold()
