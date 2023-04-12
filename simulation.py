@@ -10,16 +10,25 @@ def no_purchases():
             res = calculator()
             if i == 0:
                 sort(res)
+        sort(res)
+
+def random_purchases():
+    res = ''
+    for j in range(10):
+        for i in range(0, 100):
+            res = calculator()
+            if i == 0:
+                sort(res)
             drinks = Drink.get_allDrinks()
-            # for drink in drinks:
-            #     rand_num = random.randint(0, 99)
-            #     # check if the random number is less than 20
-            #     if rand_num < 1:
-            #         # drink is purchased
-            #         drink.newCounter += 1
-            #         print(f'{drink.name} was purchased.')
-        # for drink in Drink.get_allDrinks():
-        #     print(f'{drink.name}\'s price history is: {drink.price_history}')
+            for drink in drinks:
+                rand_num = random.randint(0, 99)
+                 # check if the random number is less than 20
+                if rand_num < 1:
+                    # drink is purchased
+                    drink.newCounter += 1
+                    print(f'{drink.name} was purchased.')
+        #for drink in Drink.get_allDrinks():
+            #print(f'{drink.name}\'s price history is: {drink.price_history}')
         sort(res)
 
 

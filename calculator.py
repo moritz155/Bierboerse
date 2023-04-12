@@ -1,9 +1,14 @@
 from flask import Flask, render_template, request, jsonify
-import time, json, random
+import time
+import json
+import random
 from drink import Drink
 from PriceChange import PriceChange
 
 # If no drinks are purchased there is a small tendency to increase the prices rather than to decrease them.
+# --> Needs to be changed!
+
+
 def calculator():
     data_set = {}
     drink_threshold = get_drink_threshold()
@@ -11,13 +16,17 @@ def calculator():
     total_sales = get_total_sales()  # last 2 periods
 
     for drink in drinks:
-        relative_part = calc_relative_part(drink.newCounter, total_sales)  # drink.orders, sales
-        #print(relative_part)
+        relative_part = calc_relative_part(
+            drink.newCounter, total_sales)  # drink.orders, sales
+        # print(relative_part)
         if above_threshold(relative_part, drink_threshold):
-            change_price(drink=drink, interval_start=0.3, price_change=PriceChange.UP)
+            change_price(drink=drink, interval_start=0.3,
+                         price_change=PriceChange.UP)
         elif randomly_change_price(drink):
-            direction = get_random_direction()
-            change_price(drink=drink, interval_start=0.1, price_change=direction)
+            # probability that the price goes up is set to 0.4 as prices should be lowered when nothing is purchased
+            direction = get_random_direction(prob_up=0.4)
+            change_price(drink=drink, interval_start=0.1,
+                         price_change=direction)
         else:  # price was not changed --> old price = current price
             update_price_history(drink, drink.price)
 
@@ -29,10 +38,10 @@ def calculator():
             "max": str(drink.maxPrice)[0:3],
             "history": drink.price_history
         }
-    #print(data_set)
+    # print(data_set)
     #with open("output.txt", "w") as f: f.write(str(data_set) + "\n\n")
 
-    #print(data_set)
+    # print(data_set)
     return data_set
 
 
@@ -44,11 +53,13 @@ def calculator():
 # --> The distance between the min and max price and the interval influence the price change
 def change_price(drink, interval_start, price_change):
     if interval_start >= 0.7:
-        print(f'Start of interval - {interval_start} - is too high; Should be less than 0.7')
+        print(
+            f'Start of interval - {interval_start} - is too high; Should be less than 0.7')
     deviation = drink.maxPrice - drink.minPrice
     interval_end = interval_start + 0.3
     old_price = drink.price
-    price_difference = (random.randint(interval_start * 10, interval_end * 10) / 10) * deviation
+    price_difference = (random.randint(interval_start * 10,
+                        interval_end * 10) / 10) * deviation
     if price_change == PriceChange.UP:
         drink.setPrice(old_price + price_difference)
     elif price_change == PriceChange.DOWN:
@@ -59,10 +70,12 @@ def change_price(drink, interval_start, price_change):
 
 def randomly_change_price(drink):
     draw = random.choices(population=[1, 2],
-                          weights=[drink.price_change_prob, 1 - drink.price_change_prob],
+                          weights=[drink.price_change_prob,
+                                   1 - drink.price_change_prob],
                           k=1)
     if draw[0] == 1:
         #print('Price Change')
+        # TODO Shouldnt this be changed inside the change_price function?
         drink.price_change_prob = 0.2
         return True
     else:
@@ -79,8 +92,14 @@ def get_total_sales():
     return total_sales
 
 
-def get_random_direction():
-    if random.randint(0, 1) == 0:
+def get_random_direction(prob_up):
+    if not prob_up:
+        prob_up = 0.5
+    draw = random.choices(population=[1, 2],
+                          weights=[prob_up, 1 - prob_up],
+                          k=1)
+    if draw[0] == 1:
+        # if random.randint(0, 1) == 0:
         return PriceChange.UP
     else:
         return PriceChange.DOWN
@@ -92,7 +111,7 @@ def update_price_history(drink, old_price):
 
 def get_price_difference(drink):
     # import ipdb; ipdb.set_trace()
-    #print(drink.price_history)
+    # print(drink.price_history)
     return abs(drink.price - drink.price_history[-1])
 
 
@@ -112,4 +131,3 @@ def get_drink_threshold():
 
 
 drink_threshold = 0.25
-
