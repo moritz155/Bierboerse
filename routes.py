@@ -66,7 +66,7 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
     for drink in drinks:
         if drink.name == name:
             clock = float(time.time())
-            drink.newDict[clock] = 1
+            drink.total_orders[clock] = 1
     return ""
 
 
