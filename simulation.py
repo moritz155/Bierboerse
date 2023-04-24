@@ -3,7 +3,6 @@ from drink import Drink
 from calculator import calculator, increased_due_threshold
 import time
 
-
 def no_purchases():
     res = ''
     for j in range(10):
@@ -23,7 +22,7 @@ def random_purchases():
         for drink in drinks:
             rand_num = random.randint(0, 100)
             drink.newDict = {}
-            # check if the random number is less than 20
+            # check if the random number is less than 50
             if rand_num < 50:
                 # drink is purchased
                 for i in range(0, random.randint(1, 3)):
@@ -38,6 +37,7 @@ def random_purchases():
     purchases_per_period = purchased_counter / 1000
     print(f'In total {purchases_per_period} were purchased per round')
     global increased_due_threshold
+
     print(
         f'Prices were increased {increased_due_threshold} times due to high purchase.')
 

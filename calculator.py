@@ -9,6 +9,7 @@ from PriceChange import PriceChange
 # --> Needs to be changed!
 
 
+
 def calculator():
     data_set = {}
     drink_threshold = get_drink_threshold()
@@ -83,6 +84,9 @@ def randomly_change_price(drink):
         #print('No Price Change')
         drink.price_change_prob += 0.05
         return False
+
+
+def get_total_sales():
     drinks = Drink.get_allDrinks()
     total_sales = 0
     for drink in drinks:
