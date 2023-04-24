@@ -9,7 +9,6 @@ from PriceChange import PriceChange
 # --> Needs to be changed!
 
 
-
 def calculator():
     data_set = {}
     drink_threshold = get_drink_threshold()
@@ -132,5 +131,9 @@ def get_drink_threshold():
     return drink_threshold
 
 
+def get_increased_due_threshold():
+    return increased_due_threshold
+
+
 drink_threshold = 0.25
-increased_due_threshold = 0
+increased_due_threshold: int = 0
