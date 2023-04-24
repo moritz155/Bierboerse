@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-import time, json, random
+import time
+import json
+import random
+
 
 class Drink:
     def __init__(self, name, init_price):  # array with one price - the starting price
@@ -12,8 +15,9 @@ class Drink:
         self.newCounter = 0  # counter of orders in a period
         self.price_was_changed = 0  # counts the times the price is changed
         self.price_change_prob = 0.2
+        self.drinkWasPurchased = 0
 
-    #def addPrice(self, newPrice):
+    # def addPrice(self, newPrice):
      #   self.price_history.append(newPrice)
 
     def setPrice(self, price):
@@ -33,7 +37,8 @@ class Drink:
                 recentlyChangedPrices.remove(drink)
                 recentlyChangedPrices.append(drink)
                 return
-        recentlyChangedPrices.append(self)  # if price of drink wasnt changed yet
+        # if price of drink wasnt changed yet
+        recentlyChangedPrices.append(self)
 
     # def addNewRandomPrice(self, price_increase, change_price):
     #     if change_price:
@@ -58,9 +63,12 @@ class Drink:
         self.newCounter = 0  # counts number of times this drink was bought in the period
         for element_time in self.newDict:
             if current_time - element_time > iteration_interval * 10:
-                listOfItemsToRemove.append(element_time)  # items from last period -- not important anymore
+                # items from last period -- not important anymore
+                listOfItemsToRemove.append(element_time)
+                print('sds')
             else:
                 self.newCounter = self.newCounter + 1
+                self.drinkWasPurchased += 1
         for i in listOfItemsToRemove:
             del self.newDict[i]  # cleanup newDict again
         return self.newCounter
@@ -68,6 +76,7 @@ class Drink:
     @staticmethod
     def get_allDrinks():
         return allDrinks
+
 
 # old_table_data = []
 # updated_last_time = time.time()
@@ -86,13 +95,13 @@ iteration_interval = 5  # in seconds
 #                   ]
 
 allDrinks = [
-Drink("Gösser", 2.10), 
-Drink("Gustl", 2.0), 
-Drink("Radler", 2.3), 
-Drink("Tyskie", 2.2),
-Drink("Cola", 1.9),
-Drink("Wein", 1.7),
-Drink("Luft", 1.5)]
+    Drink("Gösser", 2.10),
+    Drink("Gustl", 2.0),
+    Drink("Radler", 2.3),
+    Drink("Tyskie", 2.2),
+    Drink("Cola", 1.9),
+    Drink("Wein", 1.7),
+    Drink("Luft", 1.5)]
 # beers_names = ["Gösser","Gustl","Radler","Tyskie","Cola","Wein","Luft"]
 # clock_for_analysis = time.time()
 recentlyChangedPrices = []

@@ -18,13 +18,14 @@ def calculator():
     for drink in drinks:
         relative_part = calc_relative_part(
             drink.newCounter, total_sales)  # drink.orders, sales
-        # print(relative_part)
         if above_threshold(relative_part, drink_threshold):
+            global increased_due_threshold
+            increased_due_threshold += 1
             change_price(drink=drink, interval_start=0.3,
                          price_change=PriceChange.UP)
         elif randomly_change_price(drink):
-            # probability that the price goes up is set to 0.4 as prices should be lowered when nothing is purchased
-            direction = get_random_direction(prob_up=0.4)
+            # probability that the price goes up is set to 0.45 as prices should be lowered when nothing is purchased
+            direction = get_random_direction(prob_up=0.47)
             change_price(drink=drink, interval_start=0.1,
                          price_change=direction)
         else:  # price was not changed --> old price = current price
@@ -80,11 +81,8 @@ def randomly_change_price(drink):
         return True
     else:
         #print('No Price Change')
-        drink.price_change_prob += 0.1
+        drink.price_change_prob += 0.05
         return False
-
-
-def get_total_sales():
     drinks = Drink.get_allDrinks()
     total_sales = 0
     for drink in drinks:
@@ -131,3 +129,4 @@ def get_drink_threshold():
 
 
 drink_threshold = 0.25
+increased_due_threshold = 0
