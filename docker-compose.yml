@@ -1,0 +1,5 @@
+version: "3"
+services:
+  bierboerse:
+    image: bierboerse:latest
+    container_name: bierboerse
