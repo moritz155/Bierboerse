@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import time, json, random
 from calculator import calculator
 from drink import Drink
-from simulation import Simulation
+# from simulation import Simulation
 
 from flask_sock import Sock
 import requests
@@ -66,7 +66,7 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
     for drink in drinks:
         if drink.name == name:
             clock = float(time.time())
-            drink.total_orders[clock] = 1
+            drink.orders[clock] = 1
     return ""
 
 

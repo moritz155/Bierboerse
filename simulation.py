@@ -12,7 +12,7 @@ def main():
     drinks = Drink.get_allDrinks()
 
     # Let the simulation run for n -> 10 periods.
-    for i in range(0, 10):
+    for i in range(0, 100):
         data_set = calculator()
        
         for drink in drinks:
