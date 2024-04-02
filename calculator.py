@@ -69,8 +69,8 @@ def change_price(drink, interval_start, price_change):
     deviation = drink.maxPrice - drink.minPrice
     interval_end = interval_start + 0.3
     old_price = drink.price
-    price_difference = (random.randint(interval_start * 10,
-                        interval_end * 10) / 10) * deviation
+    price_difference = (random.randint(int(interval_start * 10),
+                        int(interval_end * 10)) / 10) * deviation
     if price_change == PriceChange.UP:
         drink.setPrice(old_price + price_difference)
     elif price_change == PriceChange.DOWN:

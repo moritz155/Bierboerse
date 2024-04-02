@@ -90,7 +90,11 @@
             printTable();
         } else {
             for (let drink in beerList) {
-                document.getElementById(drink + "_price").innerText = String(beerList[drink]["price"] + "0"); // update prices
+                let price = String(beerList[drink]["price"])
+                if( ! price.includes(".") ){
+                    price = price + ".0"
+                }
+                document.getElementById(drink + "_price").innerText = price + "0"; // update prices
             }
         }
     }
