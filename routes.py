@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import time, json, random
 from datetime import datetime, timedelta
 from calculator import calculator
@@ -14,6 +15,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes by default
 sock = Sock(app)
 global_socks = []
 app.config['SECRET_KEY'] = 'secret!'
@@ -59,16 +61,19 @@ def index():
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
-def ordered_Drink():  # receives the orders and adds it to the drink objects
-    name = request.form.get('name', 0)
+def ordered_Drink():  
+    # Receives a list of orders and adds them to the drink objects
+    drink_names = request.form.getlist('names[]')  # Retrieve list of drink names (IDs)
+
     drinks = Drink.get_allDrinks()
-    print("im in def ordered_drink n routes")
-    for drink in drinks:
-        if drink.name == name:
-            clock = float(time.time())
-            drink.orders[clock] = 1
-    calc_new_data() # calculate new data after each purchase
-    return ""
+    print(f"Processing ordered drinks: {drink_names}")
+    for ordered_drink in drink_names:
+        drink = Drink.get_drink_by_name(ordered_drink)
+        clock = float(time.time())
+        drink.orders[clock] = 1  # Add order to drink object
+
+    calc_new_data()  # Calculate new data after processing purchases
+    return jsonify({"message": "Drinks processed successfully"}), 200
 
 
 def calc_new_data():

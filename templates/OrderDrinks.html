@@ -145,20 +145,33 @@
     }
 
     function submit() {
+        purchased_drinks = [];
         for (let drink in beerList) {
             let amount_bought = parseInt(document.getElementById(drink + "_amount").innerText);
             for (let i = 0; i < amount_bought; i++) {
-                sendRequest(drink);
+                purchased_drinks.push(drink);
             }
         }
+        sendRequest(purchased_drinks);
         clearOldOrder();
     }
 
-    function sendRequest(id) {
+    function sendRequest(ids) {
+        if (!Array.isArray(ids) || ids.length === 0) {
+            console.error("Error: 'ids' must be a non-empty array.");
+        return;
+        }
         $.ajax({
             url: 'http://127.0.0.1:8000/ordered_Drink/',
             method: 'POST',
-            data: {'name': id}
+            data: { 'names[]': ids },  // Send as an array
+            traditional: true,  // Prevent jQuery from modifying array serialization
+            success: function(response) {
+                console.log("Success:", response);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+            }
         });
     }
 

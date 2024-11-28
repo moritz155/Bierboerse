@@ -37,9 +37,9 @@ class Drink:
         # if price of drink wasnt changed yet
         recentlyChangedPrices.append(self)
 
-
+    
     def newOrders(self):
-        """ Looks a every order inside self.orders and looks for orders performed in the current period.
+        """ Looks at every order inside self.orders and looks for orders performed in the current period.
         
                 returns self.period_order_count -> number of drinks purchased in the current period.
                 
@@ -65,6 +65,12 @@ class Drink:
     @staticmethod
     def get_allDrinks():
         return allDrinks
+    @staticmethod
+    def get_drink_by_name(name):
+        for drink in allDrinks:
+            if drink.name == name:
+                return drink
+        return None
 
 
 

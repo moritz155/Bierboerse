@@ -17,6 +17,7 @@ def calculator():
     drink_threshold = get_drink_threshold()
     drinks = Drink.get_allDrinks()
     total_sales = get_total_sales()  # last 2 periods
+    print(f"Total sales: {total_sales}")
 
     for drink in drinks:
         relative_part = calc_relative_part(drink.period_order_count, total_sales)
