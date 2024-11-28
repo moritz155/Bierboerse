@@ -26,7 +26,7 @@ app.config['SECRET_KEY'] = 'secret!'
 def echo(sock):
     while True:
         data = sock.receive()
-        if data == 'CHART' or data == 'TABLE' or data == 'INPUT':
+        if data == 'CHART' or data == 'TABLE' or data == 'INPUT' or data == 'WHEEL':
             global global_socks
             global_socks.append(sock)
         if len(global_socks) > 0:
@@ -39,6 +39,10 @@ def echo(sock):
 @app.route('/input')
 def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
+
+@app.route('/wheel')
+def wheel():
+    return render_template('WheelOfFortune.html', beers=beers_names, colorSet=customColorSet)
 
 
 @app.route('/table')
