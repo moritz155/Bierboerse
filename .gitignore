@@ -1,1 +1,6 @@
 __pycache__*
+.idea*
+bin*
+lib*
+venv*
+include*
