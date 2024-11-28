@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import time, json, random
+from datetime import datetime, timedelta
 from calculator import calculator
 from drink import Drink
 # from simulation import Simulation
@@ -95,13 +96,18 @@ beers_names = get_drink_names()
 
 ### Create a scheduler that executes /calculates new data every {iteration_interval} seconds
 scheduler = BackgroundScheduler()
+
 # Create the job
-scheduler.add_job(func=calc_new_data, trigger='interval', seconds=iteration_interval)
+scheduler.add_job(
+    func=calc_new_data, 
+    trigger='interval', 
+    seconds=iteration_interval, 
+    next_run_time=datetime.now() + timedelta(seconds=5)  # Schedule the first run after x seconds
+)
 # Start the scheduler
 scheduler.start()
 
-# /!\ IMPORTANT /!\ : Shut down the scheduler when exiting the app
+# IMPORTANT: Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
 app.run('127.0.0.1', 8000, debug=True, use_reloader=False)
-
