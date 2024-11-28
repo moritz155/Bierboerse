@@ -68,16 +68,25 @@ class Drink:
 
 
 
-iteration_interval = 5  # in seconds
+iteration_interval = 90  # in seconds
 
 allDrinks = [
-    Drink("Gösser", 2.10),
-    Drink("Gustl", 2.0),
-    Drink("Radler", 2.3),
-    Drink("Tyskie", 2.2),
-    Drink("Cola", 1.9),
-    Drink("Wein", 1.7),
-    Drink("Luft", 1.5)]
+    Drink("Bier", 0.7),
+    Drink("Softdrink", 0.5),
+    Drink("Amaretto", 0.3),
+    Drink("Spezi", 0.2),
+    Drink("Weißwein", 0.7),
+    Drink("Rotwein", 0.6),
+    Drink("Diesel", 0.5),
+    Drink("ColaRum", 0.5),
+    Drink("Kräuterlikör", 0.5),
+    Drink("Wodka", 0.5),
+
+
+
+
+
+]
 
 recentlyChangedPrices = []
 

@@ -23,7 +23,6 @@ app.config['SECRET_KEY'] = 'secret!'
 def echo(sock):
     while True:
         data = sock.receive()
-        print("im in def echo n routes")
         if data == 'CHART' or data == 'TABLE' or data == 'INPUT':
             global global_socks
             global_socks.append(sock)
@@ -67,25 +66,32 @@ def ordered_Drink():  # receives the orders and adds it to the drink objects
         if drink.name == name:
             clock = float(time.time())
             drink.orders[clock] = 1
+    calc_new_data() # calculate new data after each purchase
     return ""
 
 
 def calc_new_data():
-    print('HERE')
     r = requests.get('http://127.0.0.1:8000/data')  # send request to new data
 
+def get_drink_names():
+    drinks = Drink.get_allDrinks()
+    return list(map(lambda drink:drink.name, drinks))
 
-iteration_interval = 5
+iteration_interval = 90
 customColorSet = ["#FF0000",
                   "#FF8F00",
                   "#4BF70B",
                   "#0BF7C5",
                   "#0B0FF7",
                   "#C90BF7",
-                  "#F70B6F"
+                  "#F70B6F",
+                  "#F9FBA7",
+                  "#C930A7",
+                  "#FF0FB4",
                   ]
 
-beers_names = ["Gösser","Gustl","Radler","Tyskie","Cola","Wein","Luft"]
+beers_names = get_drink_names()
+
 
 ### Create a scheduler that executes /calculates new data every {iteration_interval} seconds
 scheduler = BackgroundScheduler()
@@ -98,3 +104,4 @@ scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 app.run('127.0.0.1', 8000, debug=True, use_reloader=False)
+
