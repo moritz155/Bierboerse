@@ -89,14 +89,14 @@ def get_drink_names():
 
 iteration_interval = 90
 customColorSet = ["#FF0000",
-                  "#FF8F00",
+                  "#4b6e10",
                   "#4BF70B",
-                  "#0BF7C5",
-                  "#0B0FF7",
+                  "#134191",
+                  "#1da4a8",
                   "#C90BF7",
                   "#F70B6F",
                   "#F9FBA7",
-                  "#C930A7",
+                  "#6b8258",
                   "#FF0FB4",
                   ]
 

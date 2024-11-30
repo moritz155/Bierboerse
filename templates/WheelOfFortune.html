@@ -18,14 +18,15 @@
     let beerList = {};
     const colorSet = {{ colorSet|tojson }};
     const beers = {{ beers|tojson }};
+    const adjustedDrinks = beers.filter(b=>b!=='Glücksgetränk')
     console.log(colorSet)
-    console.log(beers)
+    console.log(adjustedDrinks)
     const socket = new WebSocket('ws://' + location.host + '/echo');
     createWheel();
     function createWheel() {
         let sectors = [];
-        for (let i=0;i<beers.length;i++) {
-            sectors.push({ color: colorSet[i], label: beers[i] });
+        for (let i=0;i<adjustedDrinks.length;i++) {
+            sectors.push({ color: colorSet[i], label: adjustedDrinks[i] });
         }
         if (sectors.length == 0) {
             sectors = [{ color: '#f82', label: "No drinks available" }];

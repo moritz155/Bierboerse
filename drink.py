@@ -8,7 +8,7 @@ class Drink:
         self.price = init_price
         self.price_history = []  # former allPrices
         self.maxPrice = init_price * 1.4
-        self.minPrice = init_price * 0.7
+        self.minPrice = init_price * 0.6
         self.orders = {}  # gives every order a time; size of dict is equal to amount of orders
         self.period_order_count = 0  # counter of orders in a period
         self.price_was_changed = 0  # counts the times the price is changed
@@ -77,21 +77,17 @@ class Drink:
 iteration_interval = 90  # in seconds
 
 allDrinks = [
-    Drink("Bier", 0.7),
-    Drink("Softdrink", 0.5),
-    Drink("Amaretto", 0.3),
-    Drink("Spezi", 0.2),
-    Drink("Weißwein", 0.7),
-    Drink("Rotwein", 0.6),
-    Drink("Diesel", 0.5),
-    Drink("ColaRum", 0.5),
-    Drink("Kräuterlikör", 0.5),
-    Drink("Wodka", 0.5),
-
-
-
-
-
+    Drink("Sterni", 1.0),
+    Drink("Berliner", 1.5),
+    Drink("Amaretto", 1.0),
+    Drink("Radler", 1.3),
+    Drink("Weißwein", 1.3),
+    Drink("Rotwein", 1.4),
+    Drink("Spezi", 1.3),
+    Drink("Mate", 1.3),
+    Drink("Softdrink", 0.8),
+    Drink("Augustiner", 1.5),
+    Drink("Glücksgetränk", 1.4)
 ]
 
 recentlyChangedPrices = []
