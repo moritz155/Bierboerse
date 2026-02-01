@@ -52,6 +52,22 @@ def calculator():
     return data_set
 
 
+def get_current_data():
+    """ Returns the current data set without calculating new prices. """
+    data_set = {}
+    drinks = Drink.get_allDrinks()
+    for drink in drinks:
+        data_set[drink.name] = {
+            "name": drink.name,
+            "price": drink.price,
+            "price_diff": get_price_difference(drink),
+            "min": str(drink.minPrice)[0:3],
+            "max": str(drink.maxPrice)[0:3],
+            "history": drink.price_history
+        }
+    return data_set
+
+
 
 def change_price(drink, interval_start, price_change):
     """ 
@@ -118,6 +134,8 @@ def update_price_history(drink, old_price):
 
 
 def get_price_difference(drink):
+    if not drink.price_history:
+        return 0
     return abs(drink.price - drink.price_history[-1])
 
 

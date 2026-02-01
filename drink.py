@@ -6,7 +6,7 @@ class Drink:
     def __init__(self, name, init_price):  # array with one price - the starting price
         self.name = name
         self.price = init_price
-        self.price_history = []  # former allPrices
+        self.price_history = [init_price]  # former allPrices
         self.maxPrice = init_price * 1.4
         self.minPrice = init_price * 0.7
         self.orders = {}  # gives every order a time; size of dict is equal to amount of orders
@@ -68,7 +68,7 @@ class Drink:
 
 
 
-iteration_interval = 5  # in seconds
+iteration_interval = 15  # in seconds
 
 allDrinks = [
     Drink("Gösser", 2.10),
