@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>Cheap and Good Drinks</title>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
 
     <style type="text/css">
-
         body {
             /* background-image: url("/static/BeerR.jpg"); */
             background-color: black;
@@ -14,19 +14,19 @@
             background-size: cover;
             background-repeat: no-repeat;
         }
-        .canvasjs-chart-credit{
+
+        .canvasjs-chart-credit {
             display: none;
         }
 
 
-        #chartContainer {
-
-
-        }
+        #chartContainer {}
     </style>
     <div id="code"></div>
     <script>
         window.onload = function () {
+            let allPrices = []
+            minPriceSet = true;
             const socket = new WebSocket('ws://' + location.host + '/echo');
             console.log('ws://' + location.host + '/echo')
 
@@ -63,7 +63,8 @@
                 axisY: {
                     suffix: "€",
                     includeZero: true,
-                    labelFontColor: "white"
+                    labelFontColor: "white",
+                    minimum: 0
                 },
                 toolTip: {
                     shared: true
@@ -71,19 +72,25 @@
                 legend: {
                     cursor: "pointer",
                     verticalAlign: "top",
-                    fontSize: 35,
+                    fontSize: 40,
                     fontColor: "white",
-                    // itemclick: toggleDataSeries
+                    itemclick: toggleDataSeries,
+                    padding: 10
+
                 },
                 axisX: {
                     labelFormatter: function (e) {
                         return "";
-                    }
+                    },
+                    interval: 1,
+                    intervalType: "number" // Can be 'number', 'minute', 'hour', etc., based on xValueType
+
                 },
-                dataPoints: {
-                    type: "spline"
-                },
-                data: chartData,
+                data: chartData.map(dataSeries => ({
+                    ...dataSeries,
+                    type: "spline",
+                    lineThickness: 4 // Increase the line thickness here
+                })),
                 backgroundColor: "black"
             });
 
@@ -130,6 +137,18 @@
                 return list[list.length - 1]['y'];
             }
 
+            function getMinimumPrice() {
+                if (allPrices.length > 0 && !minPriceSet){
+                    minPriceSet = true
+                    let minPrice = Infinity;
+                    allPrices.forEach(price =>{
+                        if (price < minPrice) minPrice = dp.y;
+                    })
+                    console.log(minPrice)
+                    return minPrice;
+                }
+            }
+
             function newDataHasNewValues(data) {
                 for (let drink in data) {
                     //console.log(data[drink])
@@ -151,28 +170,24 @@
 
             //#########################################
             function addData(data) {
-                /*if (!newDataHasNewValues(data)) {
-                    console.log("r");
-                    return;
-                }
-                 */
                 let counter = 0
                 for (let drink in data) {
                     // let newEntry = data[drink].price;
-                    /*
-                    last entry of history is not equal to "price". Tables use price and this graph usees history though. --> different prices that are displayed!!!
-                     */
+
+                    // last entry of history is not equal to "price". Tables use price and this graph usees history though. --> different prices that are displayed!!!
                     let newEntry = data[drink]["history"][data[drink]["history"].length - 1];//last price of input is the new one
                     console.log(data[drink]['price']);
                     newEntry = data[drink]['price'];
                     let x_axis_value;
                     if (Object.values(dataList[drink].slice(-1))[0] == undefined) {
                         x_axis_value = 0
+                        allPrices.push(x_axis_value)
                     } else {
                         x_axis_value = Object.values(Object.values(dataList[drink].slice(-1))[0])[0] + 1
+                        allPrices.push(x_axis_value)
                     }
                     console.log(newEntry)
-                    dataList[drink].push({x: x_axis_value, y: newEntry}); //add the last Price
+                    dataList[drink].push({ x: x_axis_value, y: newEntry }); //add the last Price
                     if (dataList[drink].length > 6) { // max 7 entries
                         let len = dataList[drink].length;
                         dataList[drink].splice(0, len - 7);
@@ -199,9 +214,9 @@
     </div>
 
 </head>
-<div id="chartContainer"
-     style="position: absolute; height: 100%; width: 100%"></div>
+<div id="chartContainer" style="position: absolute; height: 100%; width: 100%"></div>
 <p id="demo"></p>
 <script src="{{ url_for('static', filename='js/canvas.js/canvasjs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+
 </html>

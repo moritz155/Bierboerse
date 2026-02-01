@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import time, json, random
+from datetime import datetime, timedelta
 from calculator import calculator, get_current_data
 from drink import Drink
 # from simulation import Simulation
@@ -14,7 +15,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS for all routes by default
 sock = Sock(app)
 global_socks = []
 app.config['SECRET_KEY'] = 'secret!'
@@ -25,8 +26,7 @@ app.config['SECRET_KEY'] = 'secret!'
 def echo(sock):
     while True:
         data = sock.receive()
-        print("im in def echo n routes")
-        if data == 'CHART' or data == 'TABLE' or data == 'INPUT':
+        if data == 'CHART' or data == 'TABLE' or data == 'INPUT' or data == 'WHEEL':
             global global_socks
             global_socks.append(sock)
             try:
@@ -50,6 +50,10 @@ def echo(sock):
 def input():
     return render_template('OrderDrinks.html', beers=beers_names, colorSet=customColorSet)
 
+@app.route('/wheel')
+def wheel():
+    return render_template('WheelOfFortune.html', beers=beers_names, colorSet=customColorSet)
+
 
 @app.route('/table')
 def table():  # table needs: name, price, price difference, max, min
@@ -71,53 +75,61 @@ def index():
 
 
 @app.route('/ordered_Drink/', methods=['POST'])
-def ordered_Drink():  # receives the orders and adds it to the drink objects
-    print('ordered_Drink')
-    orders = request.get_json(force=True)
+def ordered_Drink():  
+    # Receives a list of orders and adds them to the drink objects
+    drink_names = request.form.getlist('names[]')  # Retrieve list of drink names (IDs)
+
     drinks = Drink.get_allDrinks()
-    print("im in def ordered_drink n routes")
-    print("orders: ", orders)
-    
-    current_time = float(time.time())
-    for name, amount in orders.items():
-        print(f"DEBUG: Processing {name}: {amount}")
-        for drink in drinks:
-            if drink.name == name:
-                # Add unique order entries for the amount purchased
-                for i in range(amount):
-                    drink.orders[current_time + (i * 0.000001)] = 1
-                break
-    calc_new_data()
-    scheduler.reschedule_job('price_update_job', trigger='interval', seconds=iteration_interval)
-    return ""
+    print(f"Processing ordered drinks: {drink_names}")
+    for ordered_drink in drink_names:
+        drink = Drink.get_drink_by_name(ordered_drink)
+        if drink:
+             clock = float(time.time())
+             drink.orders[clock] = 1  # Add order to drink object
+        else:
+             print(f"Warning: Drink {ordered_drink} not found")
+
+    calc_new_data()  # Calculate new data after processing purchases
+    return jsonify({"message": "Drinks processed successfully"}), 200
 
 
 def calc_new_data():
-    print('HERE')
-    print('calc_new_data')
     r = requests.get('http://127.0.0.1:8000/data')  # send request to new data
 
+def get_drink_names():
+    drinks = Drink.get_allDrinks()
+    return list(map(lambda drink:drink.name, drinks))
 
-iteration_interval = 15
+iteration_interval = 90
 customColorSet = ["#FF0000",
-                  "#FF8F00",
+                  "#4b6e10",
                   "#4BF70B",
-                  "#0BF7C5",
-                  "#0B0FF7",
+                  "#134191",
+                  "#1da4a8",
                   "#C90BF7",
-                  "#F70B6F"
+                  "#F70B6F",
+                  "#F9FBA7",
+                  "#6b8258",
+                  "#FF0FB4",
                   ]
 
-beers_names = ["Gösser","Gustl","Radler","Tyskie","Cola","Wein","Luft"]
+beers_names = get_drink_names()
+
 
 ### Create a scheduler that executes /calculates new data every {iteration_interval} seconds
 scheduler = BackgroundScheduler()
+
 # Create the job
-scheduler.add_job(func=calc_new_data, trigger='interval', seconds=iteration_interval, id='price_update_job')
+scheduler.add_job(
+    func=calc_new_data, 
+    trigger='interval', 
+    seconds=iteration_interval, 
+    next_run_time=datetime.now() + timedelta(seconds=5)  # Schedule the first run after x seconds
+)
 # Start the scheduler
 scheduler.start()
 
-# /!\ IMPORTANT /!\ : Shut down the scheduler when exiting the app
+# IMPORTANT: Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
 app.run('127.0.0.1', 8000, debug=True, use_reloader=False)

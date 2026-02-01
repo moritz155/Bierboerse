@@ -8,7 +8,7 @@ class Drink:
         self.price = init_price
         self.price_history = [init_price]  # former allPrices
         self.maxPrice = init_price * 1.4
-        self.minPrice = init_price * 0.7
+        self.minPrice = init_price * 0.6
         self.orders = {}  # gives every order a time; size of dict is equal to amount of orders
         self.period_order_count = 0  # counter of orders in a period
         self.price_was_changed = 0  # counts the times the price is changed
@@ -37,9 +37,9 @@ class Drink:
         # if price of drink wasnt changed yet
         recentlyChangedPrices.append(self)
 
-
+    
     def newOrders(self):
-        """ Looks a every order inside self.orders and looks for orders performed in the current period.
+        """ Looks at every order inside self.orders and looks for orders performed in the current period.
         
                 returns self.period_order_count -> number of drinks purchased in the current period.
                 
@@ -65,19 +65,30 @@ class Drink:
     @staticmethod
     def get_allDrinks():
         return allDrinks
+    @staticmethod
+    def get_drink_by_name(name):
+        for drink in allDrinks:
+            if drink.name == name:
+                return drink
+        return None
 
 
 
-iteration_interval = 15  # in seconds
+iteration_interval = 90  # in seconds
 
 allDrinks = [
-    Drink("Gösser", 2.10),
-    Drink("Gustl", 2.0),
-    Drink("Radler", 2.3),
-    Drink("Tyskie", 2.2),
-    Drink("Cola", 1.9),
-    Drink("Wein", 1.7),
-    Drink("Luft", 1.5)]
+    Drink("Sterni", 1.0),
+    Drink("Berliner", 1.5),
+    Drink("Amaretto", 1.0),
+    Drink("Radler", 1.3),
+    Drink("Weißwein", 1.3),
+    Drink("Rotwein", 1.4),
+    Drink("Spezi", 1.3),
+    Drink("Mate", 1.3),
+    Drink("Softdrink", 0.8),
+    Drink("Augustiner", 1.5),
+    Drink("Glücksgetränk", 1.4)
+]
 
 recentlyChangedPrices = []
 
