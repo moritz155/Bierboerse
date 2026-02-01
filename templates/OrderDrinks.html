@@ -76,173 +76,101 @@
                 console.log(ev.data)
                 updateTable();
             }
-        }
-        function printTable() {
-                let table_body = ""
+        });
+
+        socket.addEventListener('open', (event) => {
+            socket.send('TABLE');
+        });
+
+        function updateTable() {
+            if (!document.getElementById("table_body").innerHTML.replace(/\s/g, '')) {
+                printTable();
+            } else {
                 for (let drink in beerList) {
-                    table_body += "<tr>"
-                    table_body += "<td id=" + drink + ">" + drink + "</td>"
-                    table_body += "<td id=" + drink + "_price>" + beerList[drink]["price"] + "</td>"
-                    table_body += "<td id=" + drink + "_amount>0 </td>"
-                    table_body += "<td><i class=\"icon-remove-sign\" onclick=decrAmount(\"" + drink + "\")></i></td>"
-                    table_body += "</tr>"
+                    let price = String(beerList[drink]["price"])
+                    if (!price.includes(".")) {
+                        price = price + ".0"
+                    }
+                    document.getElementById(drink + "_price").innerText = price + "0"; // update prices
                 }
-                document.getElementById("table_body").innerHTML = table_body;
             }
+        }
+
+        function printTable() {
+            let table_body = ""
+            for (let drink in beerList) {
+                table_body += "<tr>"
+                table_body += "<td id=" + drink + ">" + drink + "</td>"
+                table_body += "<td id=" + drink + "_price>" + beerList[drink]["price"] + "</td>"
+                table_body += "<td id=" + drink + "_amount>0 </td>"
+                table_body += "<td><i class=\"icon-remove-sign\" onclick=decrAmount(\"" + drink + "\")></i></td>"
+                table_body += "</tr>"
+            }
+            document.getElementById("table_body").innerHTML = table_body;
+        }
 
         function incrAmount(drink) {
-                let id = drink + "_amount";
-                let current = parseFloat(document.getElementById(id).innerText);
-                document.getElementById(id).innerText = String(current + 1);
-                calc_total();
-            }
+            let id = drink + "_amount";
+            let current = parseFloat(document.getElementById(id).innerText);
+            document.getElementById(id).innerText = String(current + 1);
+            calc_total();
+        }
 
         function decrAmount(drink) {
-                let id = drink + "_amount";
-                let current = parseFloat(document.getElementById(id).innerText);
-                if (current > 0) {
-                    document.getElementById(id).innerText = String(current - 1);
-                }
-                calc_total();
+            let id = drink + "_amount";
+            let current = parseFloat(document.getElementById(id).innerText);
+            if (current > 0) {
+                document.getElementById(id).innerText = String(current - 1);
             }
+            calc_total();
+        }
 
         function clearOldOrder() {
-                for (let drink in beerList) {
-                    document.getElementById(drink + "_amount").innerText = "0"; // set amounts to zero
-                }
-                document.getElementById("total_price").innerText = "0"; // set total to 0 because a new order starts
+            for (let drink in beerList) {
+                document.getElementById(drink + "_amount").innerText = "0"; // set amounts to zero
             }
+            document.getElementById("total_price").innerText = "0"; // set total to 0 because a new order starts
+        }
 
         function calc_total() {
-                let total = 0;
-                for (let drink in beerList) {
-                    total += parseFloat(document.getElementById(drink + "_amount").innerText) * parseFloat(document.getElementById(drink + "_price").innerText);
-                }
-                total = Math.round(total * 10) / 10;//round to one decimal
-                document.getElementById("total_price").innerText = String(total);
+            let total = 0;
+            for (let drink in beerList) {
+                total += parseFloat(document.getElementById(drink + "_amount").innerText) * parseFloat(document.getElementById(drink + "_price").innerText);
             }
+            total = Math.round(total * 10) / 10;//round to one decimal
+            document.getElementById("total_price").innerText = String(total);
+        }
 
         function submit() {
-                purchased_drinks = [];
-                for (let drink in beerList) {
-                    let amount_bought = parseInt(document.getElementById(drink + "_amount").innerText);
-                    for (let i = 0; i < amount_bought; i++) {
-                        purchased_drinks.push(drink);
-                    }
+            purchased_drinks = [];
+            for (let drink in beerList) {
+                let amount_bought = parseInt(document.getElementById(drink + "_amount").innerText);
+                for (let i = 0; i < amount_bought; i++) {
+                    purchased_drinks.push(drink);
                 }
-                sendRequest(purchased_drinks);
-                clearOldOrder();
             }
+            sendRequest(purchased_drinks);
+            clearOldOrder();
+        }
 
         function sendRequest(ids) {
-                if (!Array.isArray(ids) || ids.length === 0) {
-                    console.error("Error: 'ids' must be a non-empty array.");
-                    return;
+            if (!Array.isArray(ids) || ids.length === 0) {
+                console.error("Error: 'ids' must be a non-empty array.");
+                return;
+            }
+            $.ajax({
+                url: 'http://127.0.0.1:8000/ordered_Drink/',
+                method: 'POST',
+                data: { 'names[]': ids },  // Send as an array
+                traditional: true,  // Prevent jQuery from modifying array serialization
+                success: function (response) {
+                    console.log("Success:", response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
                 }
-                $.ajax({
-                    url: 'http://127.0.0.1:8000/ordered_Drink/',
-                    method: 'POST',
-                    data: { 'names[]': ids },  // Send as an array
-                    traditional: true,  // Prevent jQuery from modifying array serialization
-                    success: function (response) {
-                        console.log("Success:", response);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error:", error);
-                    }
-                });
-
-                //initializer
-                socket.addEventListener('open', (event) => {
-                    socket.send('TABLE');
-                });
-
-
-
-
-                function updateTable() {
-                    if (!document.getElementById("table_body").innerHTML.replace(/\s/g, '')) {
-                        printTable();
-                    } else {
-                        for (let drink in beerList) {
-                            let price = String(beerList[drink]["price"])
-                            if (!price.includes(".")) {
-                                price = price + ".0"
-                            }
-                            document.getElementById(drink + "_price").innerText = price + "0"; // update prices
-                        }
-                    }
-                }
-
-                function printTable() {
-                    let table_body = ""
-                    for (let drink in beerList) {
-                        table_body += "<tr>"
-                        table_body += "<td id=" + drink + ">" + drink + "</td>"
-                        table_body += "<td id=" + drink + "_price>" + beerList[drink]["price"] + "</td>"
-                        table_body += "<td id=" + drink + "_amount>0 </td>"
-                        table_body += "<td><i class=\"icon-remove-sign\" onclick=decrAmount(\"" + drink + "\")></i></td>"
-                        table_body += "</tr>"
-                    }
-                    document.getElementById("table_body").innerHTML = table_body;
-                }
-
-                function incrAmount(drink) {
-                    let id = drink + "_amount";
-                    let current = parseFloat(document.getElementById(id).innerText);
-                    document.getElementById(id).innerText = String(current + 1);
-                    calc_total();
-                }
-
-                function decrAmount(drink) {
-                    let id = drink + "_amount";
-                    let current = parseFloat(document.getElementById(id).innerText);
-                    if (current > 0) {
-                        document.getElementById(id).innerText = String(current - 1);
-                    }
-                    calc_total();
-                }
-
-                function clearOldOrder() {
-                    for (let drink in beerList) {
-                        document.getElementById(drink + "_amount").innerText = "0"; // set amounts to zero
-                    }
-                    document.getElementById("total_price").innerText = "0"; // set total to 0 because a new order starts
-                }
-
-                function calc_total() {
-                    let total = 0;
-                    for (let drink in beerList) {
-                        total += parseFloat(document.getElementById(drink + "_amount").innerText) * parseFloat(document.getElementById(drink + "_price").innerText);
-                    }
-                    total = Math.round(total * 10) / 10;//round to one decimal
-                    document.getElementById("total_price").innerText = String(total);
-                }
-
-                function submit() {
-                    let orderPayload = {};
-                    for (let drink in beerList) {
-                        let amount_bought = parseInt(document.getElementById(drink + "_amount").innerText);
-                        if (amount_bought > 0) {
-                            orderPayload[drink] = amount_bought;
-                        }
-                    }
-
-                    if (Object.keys(orderPayload).length > 0) {
-                        sendRequest(orderPayload);
-                    }
-                    clearOldOrder();
-                }
-
-                function sendRequest(payload) {
-                    $.ajax({
-                        url: 'http://127.0.0.1:8000/ordered_Drink/',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload)
-                    });
-                }
-
+            });
+        }
     </script>
 
 
