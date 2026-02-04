@@ -72,7 +72,7 @@ def get_current_data():
 
 def change_price(drink, interval_start, price_change):
     """ 
-        interval is always 0.3 percent big. It influences the size of the price change.
+        interval is always 0.3 percent. It influences the size of the price change.
         EXAMPLE: interval_start=0.3; minPrice=0.6; maxPrice=1.6;
         --> interval goes from 0.3 to 0.6; deviation = 1.6 - 0.6 = 1;
         --> price_difference = ((random number between 3 and 6) / 10) * 1

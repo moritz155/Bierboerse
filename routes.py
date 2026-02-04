@@ -34,11 +34,12 @@ def echo(sock):
             except Exception:
                 pass
         if len(global_socks) > 0:
-            for sock in global_socks:
+            for s in global_socks[:]:
                 try:
-                    sock.send(data)
+                    s.send(data)
                 except Exception:
-                    global_socks.remove(sock)
+                    if s in global_socks:
+                        global_socks.remove(s)
         else:
             try:
                 sock.send(data)
@@ -64,6 +65,7 @@ def table():  # table needs: name, price, price difference, max, min
 def data_for_table():  # table needs: name, price, price difference, max, min
     ws = create_connection("ws://localhost:8000/echo")
     ws.send(json.dumps(calculator()))
+    ws.send(json.dumps({"type": "ALCOHOL", "value": Drink.total_alcohol_sold}))
     ws.close()
     return {}
 
@@ -86,6 +88,7 @@ def ordered_Drink():
         if drink:
              clock = float(time.time())
              drink.orders[clock] = 1  # Add order to drink object
+             Drink.total_alcohol_sold += drink.alcohol_content
         else:
              print(f"Warning: Drink {ordered_drink} not found")
 

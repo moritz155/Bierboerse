@@ -21,6 +21,35 @@
 
 
         #chartContainer {}
+
+        #alcohol_display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+
+            background: rgba(30, 30, 30, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 25px;
+
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        #alcohol_display:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(75, 247, 11, 0.15);
+            /* matching one of the graph colors */
+        }
     </style>
     <div id="code"></div>
     <script>
@@ -34,9 +63,15 @@
             socket.addEventListener('message', ev => {
                 if (ev.data != "CHART") {
                     let a = JSON.parse(ev.data);
-                    console.log('NEW DATA!!!');
-                    console.log(a)
-                    addData(a);
+                    if (a.type === "ALCOHOL") {
+                        console.log("ALCOHOL: " + a.value)
+                        let el = document.getElementById("alcohol_display");
+                        if (el) el.innerText = "Alkohol insgesamt ausgeschenkt: " + a.value + " g";
+                    } else {
+                        console.log('NEW DATA!!!');
+                        console.log(a)
+                        addData(a);
+                    }
                 }
             });
 
@@ -138,10 +173,10 @@
             }
 
             function getMinimumPrice() {
-                if (allPrices.length > 0 && !minPriceSet){
+                if (allPrices.length > 0 && !minPriceSet) {
                     minPriceSet = true
                     let minPrice = Infinity;
-                    allPrices.forEach(price =>{
+                    allPrices.forEach(price => {
                         if (price < minPrice) minPrice = dp.y;
                     })
                     console.log(minPrice)
@@ -214,6 +249,7 @@
     </div>
 
 </head>
+<div id="alcohol_display">Alkohol insgesamt ausgeschenkt: 0 g</div>
 <div id="chartContainer" style="position: absolute; height: 100%; width: 100%"></div>
 <p id="demo"></p>
 <script src="{{ url_for('static', filename='js/canvas.js/canvasjs.min.js') }}"></script>

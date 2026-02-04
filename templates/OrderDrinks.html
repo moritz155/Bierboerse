@@ -10,6 +10,17 @@
         * {
             font-family: sans-serif;
         }
+
+        #alcohol_counter {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.2rem;
+            background-color: #e9ecef;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid #ced4da;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -54,6 +65,7 @@
                 <input class="btn btn-primary" type="submit" value="Submit" onclick="submit()">
             </div>
             <div class="col-4">
+                <span class="total" id="alcohol_counter">Alkohol insgesamt ausgeschenkt: 0 g</span>
             </div>
         </div>
 
@@ -71,10 +83,14 @@
         socket.addEventListener('message', ev => {
             //console.log(typeof ev.data)
             if (ev.data != "TABLE") {
-                //console.log('NEW DATA!!!')
-                beerList = JSON.parse(ev.data);
-                console.log(ev.data)
-                updateTable();
+                let msg = JSON.parse(ev.data);
+                if (msg.type === "ALCOHOL") {
+                    document.getElementById("alcohol_counter").innerText = "Alkohol insgesamt ausgeschenkt: " + msg.value + " g";
+                } else {
+                    beerList = msg;
+                    console.log(ev.data)
+                    updateTable();
+                }
             }
         });
 

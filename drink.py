@@ -3,9 +3,12 @@ import time
 
 
 class Drink:
-    def __init__(self, name, init_price):  # array with one price - the starting price
+    total_alcohol_sold = 0 # Static variable to track total alcohol sold
+
+    def __init__(self, name, init_price, alcohol_content=0):  # array with one price - the starting price
         self.name = name
         self.price = init_price
+        self.alcohol_content = alcohol_content
         self.price_history = [init_price]  # former allPrices
         self.maxPrice = init_price * 1.4
         self.minPrice = init_price * 0.6
@@ -77,17 +80,17 @@ class Drink:
 iteration_interval = 90  # in seconds
 
 allDrinks = [
-    Drink("Sterni", 1.0),
-    Drink("Berliner", 1.5),
-    Drink("Amaretto", 1.0),
-    Drink("Radler", 1.3),
-    Drink("Weißwein", 1.3),
-    Drink("Rotwein", 1.4),
-    Drink("Spezi", 1.3),
-    Drink("Mate", 1.3),
-    Drink("Softdrink", 0.8),
-    Drink("Augustiner", 1.5),
-    Drink("Glücksgetränk", 1.4)
+    Drink("Sterni", 1.0, 0.05*5),
+    Drink("Berliner", 1.5, 0.05*5),
+    Drink("Amaretto", 1.0, 10),
+    Drink("Radler", 1.3, 0.025*5),
+    Drink("Weißwein", 1.3, 0.12*2),
+    Drink("Rotwein", 1.4, 0.14*2),
+    Drink("Spezi", 1.3, 0),
+    Drink("Mate", 1.3, 0),
+    Drink("Softdrink", 0.8, 0),
+    Drink("Augustiner", 1.5, 0.05*5),
+    Drink("Glücksgetränk", 1.4, 0)
 ]
 
 recentlyChangedPrices = []
