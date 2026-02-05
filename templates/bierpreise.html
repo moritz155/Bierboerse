@@ -223,9 +223,9 @@
                     }
                     console.log(newEntry)
                     dataList[drink].push({ x: x_axis_value, y: newEntry }); //add the last Price
-                    if (dataList[drink].length > 6) { // max 7 entries
+                    if (dataList[drink].length > 13) { // max 14 entries
                         let len = dataList[drink].length;
-                        dataList[drink].splice(0, len - 7);
+                        dataList[drink].splice(0, len - 14);
                     }
                     counter = counter + 1
                 }
