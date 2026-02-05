@@ -26,49 +26,61 @@
 
 
 <body>
-    <h1>Choose your Beer wisely</h1>
-    <div class="container">
-        {% for i in range(0, beers|length) %}
-        {% if i % 3 == 0 %}
-        {% if i != 0 %}
-    </div>
-    {% endif %}
-    <div class="row">
-        {% endif %}
-        <div class="col-4">
-            <button class="buttons" onclick=incrAmount("{{ beers[i] }}") style="color:{{ colorSet[i] }}">{{ beers[i]
-                }}</button>
+    <h1>Bar Dashboard</h1>
+    <div class="container-fluid">
+        <div class="drink-grid">
+            {% for i in range(0, beers|length) %}
+            <div class="drink-card" onclick="incrAmount('{{ beers[i] }}')" style="--drink-color: {{ colorSet[i] }}">
+                <div class="drink-name" style="color: {{ colorSet[i] }}">{{ beers[i] }}</div>
+                <div class="drink-price-tag" id="{{ beers[i] }}_price_card">Loading...</div>
+                <div class="drink-badge" id="{{ beers[i] }}_card_amount" style="display:none;">0</div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-    </div>
-    <table class="table checkout">
-        <thead>
-            <tr>
-                <th scope="col">Drink</th>
-                <th scope="col">Price</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Remove One</th>
-            </tr>
-        </thead>
-        <tbody id="table_body">
-        </tbody>
-    </table>
-    <div class="container">
-        <div class="row">
-            <div class="col-4">
-            </div>
-            <div class="col-4">
-                <span class="total">Total: </span>
-                <span class="total" id="total_price">0</span>
-                <span class="total"> Euros </span>
-                <input class="btn btn-primary" type="submit" value="Submit" onclick="submit()">
-            </div>
-            <div class="col-4">
-                <span class="total" id="alcohol_counter">Alkohol insgesamt ausgeschenkt: 0 g</span>
-            </div>
-        </div>
 
+    <div class="checkout-container">
+        <div class="container">
+            <div class="row align-items-center mb-3">
+                <div class="col-12">
+                    <table class="table checkout">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Drink</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_body">
+                            {% for i in range(0, beers|length) %}
+                            <tr id="row_{{ beers[i] }}" style="display:none;">
+                                <td id="{{ beers[i] }}">{{ beers[i] }}</td>
+                                <td id="{{ beers[i] }}_price">Loading...</td>
+                                <td id="{{ beers[i] }}_amount">0</td>
+                                <td><i class="icon-remove-sign" onclick="decrAmount('{{ beers[i] }}')"></i></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center text-md-start">
+                    <span id="alcohol_counter">Alkohol insgesamt: 0 g</span>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="total-display">
+                        Total: <span id="total_price">0.00</span> €
+                    </div>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <button class="btn btn-primary btn-submit" type="submit" onclick="submit()">
+                        Place Order <i class="icon-ok"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -99,52 +111,82 @@
         });
 
         function updateTable() {
-            if (!document.getElementById("table_body").innerHTML.replace(/\s/g, '')) {
-                printTable();
-            } else {
-                for (let drink in beerList) {
-                    let price = String(beerList[drink]["price"])
-                    if (!price.includes(".")) {
-                        price = price + ".0"
-                    }
-                    document.getElementById(drink + "_price").innerText = price + "0"; // update prices
-                }
-            }
-        }
-
-        function printTable() {
-            let table_body = ""
+            // Update the prices on the CARDS
             for (let drink in beerList) {
-                table_body += "<tr>"
-                table_body += "<td id=" + drink + ">" + drink + "</td>"
-                table_body += "<td id=" + drink + "_price>" + beerList[drink]["price"] + "</td>"
-                table_body += "<td id=" + drink + "_amount>0 </td>"
-                table_body += "<td><i class=\"icon-remove-sign\" onclick=decrAmount(\"" + drink + "\")></i></td>"
-                table_body += "</tr>"
+                let price = String(beerList[drink]["price"])
+                if (!price.includes(".")) {
+                    price = price + ".0"
+                }
+                // Update the card price
+                // Update the card price
+                let cardPriceFn = document.getElementById(drink + "_price_card");
+                if (cardPriceFn) cardPriceFn.innerText = price + "0 €";
+
+                // ALSO update the table list price (crucial for calc_total and display)
+                let tablePriceFn = document.getElementById(drink + "_price");
+                if (tablePriceFn) tablePriceFn.innerText = price + "0";
+
+
             }
-            document.getElementById("table_body").innerHTML = table_body;
         }
 
         function incrAmount(drink) {
+            console.log("Clicked: " + drink);
             let id = drink + "_amount";
-            let current = parseFloat(document.getElementById(id).innerText);
-            document.getElementById(id).innerText = String(current + 1);
+            let el = document.getElementById(id);
+            if (!el) {
+                console.error("Element not found: " + id);
+                return;
+            }
+            let current = parseFloat(el.innerText);
+            el.innerText = String(current + 1);
+
+            updateCardBadge(drink, current + 1);
+            updateRowVisibility(drink);
             calc_total();
         }
 
         function decrAmount(drink) {
             let id = drink + "_amount";
-            let current = parseFloat(document.getElementById(id).innerText);
+            let el = document.getElementById(id);
+            let current = parseFloat(el.innerText);
             if (current > 0) {
-                document.getElementById(id).innerText = String(current - 1);
+                el.innerText = String(current - 1);
             }
+            updateCardBadge(drink, current - 1);
+            updateRowVisibility(drink);
             calc_total();
         }
 
-        function clearOldOrder() {
-            for (let drink in beerList) {
-                document.getElementById(drink + "_amount").innerText = "0"; // set amounts to zero
+        function updateCardBadge(drink, amount) {
+            let badge = document.getElementById(drink + "_card_amount");
+            if (badge) {
+                badge.innerText = amount;
+                badge.style.display = amount > 0 ? "flex" : "none";
             }
+        }
+
+        function updateRowVisibility(drink) {
+            let amountId = drink + "_amount";
+            let rowId = "row_" + drink;
+            let amount = parseFloat(document.getElementById(amountId).innerText);
+            let row = document.getElementById(rowId);
+
+            if (amount > 0) {
+                row.style.display = "table-row";
+            } else {
+                row.style.display = "none";
+            }
+        }
+
+        function clearOldOrder() {
+            const rows = document.querySelectorAll('tr[id^="row_"]');
+            rows.forEach(row => {
+                let drink = row.id.replace("row_", "");
+                document.getElementById(drink + "_amount").innerText = "0"; // set amounts to zero
+                updateCardBadge(drink, 0);
+                updateRowVisibility(drink); // Hide the rows again
+            });
             document.getElementById("total_price").innerText = "0"; // set total to 0 because a new order starts
         }
 
@@ -159,14 +201,25 @@
 
         function submit() {
             purchased_drinks = [];
-            for (let drink in beerList) {
-                let amount_bought = parseInt(document.getElementById(drink + "_amount").innerText);
+            // We need to iterate over the actual DOM elements because beerList might be outdated or empty if socket failed
+            // Actually, let's use the 'beers' list from Jinja via the DOM rows we know exist
+            const rows = document.querySelectorAll('tr[id^="row_"]');
+
+            rows.forEach(row => {
+                let drink = row.id.replace("row_", "");
+                let amountId = drink + "_amount";
+                let amount_bought = parseInt(document.getElementById(amountId).innerText);
                 for (let i = 0; i < amount_bought; i++) {
                     purchased_drinks.push(drink);
                 }
+            });
+
+            if (purchased_drinks.length > 0) {
+                sendRequest(purchased_drinks);
+                clearOldOrder();
+            } else {
+                console.log("No drinks selected");
             }
-            sendRequest(purchased_drinks);
-            clearOldOrder();
         }
 
         function sendRequest(ids) {
