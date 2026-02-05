@@ -11,6 +11,37 @@ import requests
 from websocket import create_connection
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
+import csv
+import os
+
+LOG_FILE = 'sales_summary.csv'
+sales_stats = {}
+
+def load_stats():
+    global sales_stats
+    if os.path.isfile(LOG_FILE):
+        with open(LOG_FILE, mode='r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            next(reader, None) # skip header
+            for row in reader:
+                if row:
+                    sales_stats[row[0]] = {'amount': int(row[1]), 'revenue': float(row[2])}
+
+def save_stats():
+    with open(LOG_FILE, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Drink', 'Amount', 'Total_Revenue'])
+        for name, data in sales_stats.items():
+            writer.writerow([name, data['amount'], f"{data['revenue']:.2f}"])
+
+def update_stats(drink_name, price):
+    if drink_name not in sales_stats:
+        sales_stats[drink_name] = {'amount': 0, 'revenue': 0.0}
+    sales_stats[drink_name]['amount'] += 1
+    sales_stats[drink_name]['revenue'] += price
+
+load_stats()
+
 
 
 
@@ -87,11 +118,14 @@ def ordered_Drink():
         drink = Drink.get_drink_by_name(ordered_drink)
         if drink:
              clock = float(time.time())
+             current_price = drink.price
              drink.orders[clock] = 1  # Add order to drink object
              Drink.total_alcohol_sold += drink.alcohol_content
+             update_stats(drink.name, current_price)
         else:
              print(f"Warning: Drink {ordered_drink} not found")
 
+    save_stats()
     calc_new_data()  # Calculate new data after processing purchases
     return jsonify({"message": "Drinks processed successfully"}), 200
 
