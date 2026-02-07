@@ -56,7 +56,7 @@
             </div>
             <div class="row align-items-center">
                 <div class="col-md-4 text-center text-md-start">
-                    <span id="alcohol_counter">Alkohol insgesamt: 0 g</span>
+                    <span id="alcohol_counter">Alkohol insgesamt: 0 ml</span>
                 </div>
                 <div class="col-md-4 text-center">
                     <div class="total-display">
@@ -86,7 +86,7 @@
             if (ev.data != "TABLE") {
                 let msg = JSON.parse(ev.data);
                 if (msg.type === "ALCOHOL") {
-                    document.getElementById("alcohol_counter").innerText = "Alkohol insgesamt ausgeschenkt: " + parseFloat(msg.value).toFixed(2).replace('.', ',') + " g";
+                    document.getElementById("alcohol_counter").innerText = "Alkohol insgesamt ausgeschenkt: " + parseFloat(msg.value).toFixed(2).replace('.', ',') + " ml";
                 } else {
                     beerList = msg;
                     console.log(ev.data)

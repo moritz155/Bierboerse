@@ -137,7 +137,7 @@ def get_drink_names():
     drinks = Drink.get_allDrinks()
     return list(map(lambda drink:drink.name, drinks))
 
-iteration_interval = 90
+iteration_interval = 300 # in seconds
 customColorSet = ["#FF0000",
                   "#4b6e10",
                   "#4BF70B",
@@ -145,9 +145,10 @@ customColorSet = ["#FF0000",
                   "#1da4a8",
                   "#C90BF7",
                   "#F70B6F",
-                  "#F9FBA7",
+                  "#6B68ED",
                   "#6b8258",
                   "#FF0FB4",
+                  "#FB0B1F",
                   ]
 
 beers_names = get_drink_names()

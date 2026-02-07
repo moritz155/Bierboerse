@@ -67,7 +67,7 @@
                     if (a.type === "ALCOHOL") {
                         console.log("ALCOHOL: " + a.value)
                         let el = document.getElementById("alcohol_display");
-                        if (el) el.innerText = " insgesamt ausgeschenkt: " + parseFloat(a.value).toFixed(2).replace('.', ',') + " g";
+                        if (el) el.innerText = "Alkohol insgesamt ausgeschenkt: " + parseFloat(a.value).toFixed(2).replace('.', ',') + " ml";
                     } else {
                         console.log('NEW DATA!!!');
                         console.log(a)
@@ -102,7 +102,7 @@
                     labelFontColor: "white",
                     minimum: 0,
                     labelFormatter: function (e) {
-                        return e.value.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+                        return e.value.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ";
                     }
                 },
                 toolTip: {
