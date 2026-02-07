@@ -60,7 +60,7 @@
                 </div>
                 <div class="col-md-4 text-center">
                     <div class="total-display">
-                        Gesamt: <span id="total_price">0.00</span> €
+                        Gesamt: <span id="total_price">0,00</span> €
                     </div>
                 </div>
                 <div class="col-md-4 text-center text-md-end">
@@ -86,7 +86,7 @@
             if (ev.data != "TABLE") {
                 let msg = JSON.parse(ev.data);
                 if (msg.type === "ALCOHOL") {
-                    document.getElementById("alcohol_counter").innerText = "Alkohol insgesamt ausgeschenkt: " + msg.value + " g";
+                    document.getElementById("alcohol_counter").innerText = "Alkohol insgesamt ausgeschenkt: " + parseFloat(msg.value).toFixed(2).replace('.', ',') + " g";
                 } else {
                     beerList = msg;
                     console.log(ev.data)
@@ -109,11 +109,11 @@
                 // Update the card price
                 // Update the card price
                 let cardPriceFn = document.getElementById(drink + "_price_card");
-                if (cardPriceFn) cardPriceFn.innerText = price + "0 €";
+                if (cardPriceFn) cardPriceFn.innerText = price.replace('.', ',') + "0 €";
 
                 // ALSO update the table list price (crucial for calc_total and display)
                 let tablePriceFn = document.getElementById(drink + "_price");
-                if (tablePriceFn) tablePriceFn.innerText = price + "0";
+                if (tablePriceFn) tablePriceFn.innerText = price.replace('.', ',') + "0";
 
 
             }
@@ -176,16 +176,16 @@
                 updateCardBadge(drink, 0);
                 updateRowVisibility(drink); // Hide the rows again
             });
-            document.getElementById("total_price").innerText = "0"; // set total to 0 because a new order starts
+            document.getElementById("total_price").innerText = "0,00"; // set total to 0 because a new order starts
         }
 
         function calc_total() {
             let total = 0;
             for (let drink in beerList) {
-                total += parseFloat(document.getElementById(drink + "_amount").innerText) * parseFloat(document.getElementById(drink + "_price").innerText);
+                total += parseFloat(document.getElementById(drink + "_amount").innerText) * parseFloat(document.getElementById(drink + "_price").innerText.replace(',', '.'));
             }
-            total = Math.round(total * 10) / 10;//round to one decimal
-            document.getElementById("total_price").innerText = String(total);
+            total = Math.round(total * 10) / 10; //round to one decimal
+            document.getElementById("total_price").innerText = total.toFixed(2).replace('.', ',');
         }
 
         function submit() {

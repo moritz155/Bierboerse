@@ -8,6 +8,7 @@
 
     <style type="text/css">
         body {
+            overflow: hidden;
             /* background-image: url("/static/BeerR.jpg"); */
             background-color: black;
             height: 100%;
@@ -66,7 +67,7 @@
                     if (a.type === "ALCOHOL") {
                         console.log("ALCOHOL: " + a.value)
                         let el = document.getElementById("alcohol_display");
-                        if (el) el.innerText = "Alkohol insgesamt ausgeschenkt: " + a.value + " g";
+                        if (el) el.innerText = " insgesamt ausgeschenkt: " + parseFloat(a.value).toFixed(2).replace('.', ',') + " g";
                     } else {
                         console.log('NEW DATA!!!');
                         console.log(a)
@@ -99,10 +100,21 @@
                     suffix: "€",
                     includeZero: true,
                     labelFontColor: "white",
-                    minimum: 0
+                    minimum: 0,
+                    labelFormatter: function (e) {
+                        return e.value.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+                    }
                 },
                 toolTip: {
-                    shared: true
+                    shared: true,
+                    contentFormatter: function (e) {
+                        var content = "";
+                        for (var i = 0; i < e.entries.length; i++) {
+                            content += e.entries[i].dataSeries.name + ": " + "<strong>" + e.entries[i].dataPoint.y.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €</strong>";
+                            content += "<br/>";
+                        }
+                        return content;
+                    }
                 },
                 legend: {
                     cursor: "pointer",
@@ -136,7 +148,7 @@
                     data.push({
                         type: "spline",
                         //xValueType: "dateTime",
-                        yValueFormatString: "€##.00",
+                        //yValueFormatString: "€ #,##0.00",
                         //xValueFormatString: "hh:mm:ss TT",
                         showInLegend: true,
                         name: nameList[i],
@@ -164,9 +176,10 @@
 
             function updateLegend() {
                 for (let i = 0; i < nameList.length; i++) {
-                    chart1.options.data[i].legendText = nameList[i] + " " + getLastValueFromList(dataList[nameList[i]]) + " €";
+                    chart1.options.data[i].legendText = nameList[i] + " " + getLastValueFromList(dataList[nameList[i]]).toFixed(2).replace('.', ',') + " €";
                 }
             }
+
 
             function getLastValueFromList(list) {
                 return list[list.length - 1]['y'];
@@ -249,7 +262,7 @@
     </div>
 
 </head>
-<div id="alcohol_display">Alkohol insgesamt ausgeschenkt: 0 g</div>
+<div id="alcohol_display">Alkohol insgesamt ausgeschenkt: 0 ml</div>
 <div id="chartContainer" style="position: absolute; height: 100%; width: 100%"></div>
 <p id="demo"></p>
 <script src="{{ url_for('static', filename='js/canvas.js/canvasjs.min.js') }}"></script>
