@@ -10,7 +10,7 @@ body {
 
 h1 {
     font-weight: 700;
-    font-size: 3rem;
+    font-size: 4rem;
     text-align: center;
     margin: 30px 0 40px;
     color: #ffffff;
@@ -19,7 +19,7 @@ h1 {
 
 .drink-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
     padding: 20px;
 }
@@ -38,7 +38,7 @@ h1 {
     justify-content: center;
     padding: 20px;
     height: 100%;
-    min-height: 180px;
+    min-height: 220px;
     position: relative;
     user-select: none;
     /* Prevent text selection on rapid clicks */
@@ -55,7 +55,7 @@ h1 {
 }
 
 .drink-name {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 10px;
     text-align: center;
@@ -63,7 +63,7 @@ h1 {
 }
 
 .drink-price-tag {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #555;
     background: #f1f3f5;
@@ -81,12 +81,12 @@ h1 {
     color: white;
     font-weight: bold;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.2rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     /* Hidden by default via JS until > 0 */
 }
@@ -128,12 +128,13 @@ h1 {
     border-bottom: 2px solid rgba(0, 0, 0, 0.1);
     color: #2c3e50;
     font-weight: 700;
+    font-size: 1.2rem;
 }
 
 .icon-remove-sign {
     cursor: pointer;
     color: #e74c3c;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     transition: color 0.2s;
 }
 
@@ -144,7 +145,7 @@ h1 {
 #alcohol_counter {
     font-weight: bold;
     color: #2c3e50;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     background-color: #fff;
     padding: 10px 20px;
     border-radius: 50px;
@@ -154,7 +155,7 @@ h1 {
 }
 
 .total-display {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #2c3e50;
 }
@@ -164,7 +165,7 @@ h1 {
 }
 
 .btn-submit {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     padding: 10px 30px;
     border-radius: 50px;
     font-weight: 600;
